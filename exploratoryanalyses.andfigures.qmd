@@ -36,7 +36,7 @@ This code is intended to set the stage for further analyses.
 
 ```{r}
 lapply(c("tidyverse", "lme4", "ggthemes","car","emmeans","brglm2", "ggthemes", 
-         "rethinking", "usethis", "here", "mgcv", "gratia", "extrafont"), 
+         "rethinking", "usethis", "here", "mgcv", "gratia", "extrafont","rstatix"), 
        require, character.only=T)
 ```
 
@@ -149,9 +149,9 @@ size_dist <- ggplot(treat2, aes(x = Length_mm, fill = Watershed))+
   labs(x = "Length (mm)",
        y = "Count")+
   theme_bw()+
-  facet_grid(Watershed~Year)
+  facet_grid(Watershed~Year);size_dist
 
-size_dist
+ggsave("output/facet.fishlength.png", plot= size_dist, height = 4, width = 4.5, units = "in")
 ```
 
 #### Within locations, across years
@@ -166,9 +166,7 @@ size_distbyyear <- ggplot(treat2, aes(x = Length_mm, fill = Watershed))+
   labs(x = "Length (mm)",
        y = "Count")+
   theme_bw()+
-  facet_wrap(~Year)
-
-size_distbyyear
+  facet_wrap(~Year); size_distbyyear
 ```
 
 ```{r}
@@ -181,9 +179,7 @@ size_distbylocation <- ggplot(treat2, aes(x = Length_mm, fill = Watershed))+
   labs(x = "Length (mm)",
        y = "Count")+
   theme_bw()+
-  facet_wrap(~Watershed)
-
-size_distbylocation
+  facet_wrap(~Watershed); size_distbylocation
 ```
 
 ### Critical Thermal Maximum
@@ -197,14 +193,14 @@ treat2 %>%
   ggplot(aes(x = as.factor(Watershed), y = LOE.Temp_C, color = Watershed)) +
 
   geom_jitter(width = .25,
-    size = 2.5,
-    alpha = 0.4) +
+    size = 2.25,
+    alpha = 0.5) +
 
   stat_summary(
     fun = mean,
     geom = "point",
     position = position_dodge(width = 0.8),
-    size = 4,
+    size = 4.5,
     stroke = 0.6
   ) +
 
@@ -238,6 +234,401 @@ treat2 %>%
 # may need to make points smaller for when I save the figure for the manuscript
 ```
 
-### Stream Temperature
+### Violin Plot
 
-## Basic Data Analysis
+```{r}
+violinplot <- treat2 %>% 
+  group_by(WatershedYear) %>% 
+  mutate(mean_C = mean(LOE.Temp_C)) %>% 
+  ungroup() %>% 
+  filter(!Treatment == 1) %>% 
+  ggplot(aes(x = as.factor(Watershed), y = LOE.Temp_C, fill = Watershed)) +
+
+  geom_violin(alpha = 0.5)+
+  geom_jitter(width = .15,
+    size = 1.75,
+    alpha = 0.6) +
+
+  facet_wrap(~Year) +
+
+  
+  scale_fill_manual(values = fig1_palette) +
+
+  labs(
+    x = "Watershed",
+    y = "LOE Temp (°C)"
+  ) +
+
+  theme_bw() +
+  theme(
+    text = element_text(family = "Times New Roman", size = 8),
+    axis.text = element_text(size = 6),
+    axis.title = element_text(size = 7),
+    strip.text = element_text(size = 7),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "bottom",
+    legend.spacing.y = unit(0.05, "cm"),
+  legend.margin = margin(t = 0, b = 0, unit = "cm"),
+  legend.box.margin = margin(0, 0, 0, 0)
+  )+
+  guides(
+  color = guide_legend(nrow = 2, byrow = TRUE,
+                       keywidth = 0.4,
+    keyheight = 0.4)
+); violinplot
+
+
+```
+
+```{r}
+ggsave("output/violinplot.png", plot = violinplot, height = 4, width = 4, units = "in")
+```
+
+## Basic Data Analysis of CTMax
+
+Before proceeding with data analysis, I need to do a normality check.
+
+### Welch's ANOVA and Games-Howell
+
+#### Normality check for ANOVA
+
+I need to check to see if the data violates the assumptions of normality required for an ANOVA.
+
+Assumptions:
+
+1.  each subject belongs to only group (no repeats)
+
+2.  no significant outliers
+
+3.  normality
+
+4.  homogeneity of variances
+
+Outliers:
+
+```{r}
+treat2 %>% 
+  group_by(Watershed, Year) %>%
+  identify_outliers(LOE.Temp_C)
+```
+
+Normality:
+
+```{r}
+model <- lm(LOE.Temp_C~Watershed, data = treat2)
+par(mfrow=c(2,2)) #makea2x2matrixofplots
+plot(model) #make4diagnosticplots
+```
+
+```{r}
+shapiro.test(resid(model))
+# passes Shapiro test!
+
+summary(lm(resid(model)~poly(predict(model),2)))
+# passes the non-linearity of residuals test
+
+library(lmtest)
+bptest(model)
+
+# however, it is heteroskedastic
+```
+
+The above tested for normality of residuals.
+
+```{r}
+car::leveneTest(LOE.Temp_C ~ Watershed, data = treat2)
+```
+
+I use a basic Welch's ANOVA with a Games-Howell posthoc pairwise comparison. This will be done on two levels:
+
+#### Across years
+
+```{r}
+oneway.test(LOE.Temp_C ~ Watershed, data = treat2, var.equal = FALSE)
+```
+
+```{r}
+gh_acrossyears<- games_howell_test(treat2, LOE.Temp_C ~ Watershed)
+summary(gh_acrossyears)
+write.csv(gh_acrossyears, "output/acrossyears.gameshowelltest.csv",row.names = FALSE) 
+```
+
+##### Results Across Years:
+
+What we see here is that Big Creek is statistically different from all sites (p\< 0.05), but Carmel River and Scott Creek are not significantly different (p = 0.39)
+
+------------------------------------------------------------------------
+
+#### Within Years
+
+**Within 2024:**
+
+```{r}
+treat2 %>% 
+  filter(Year == 2024) %>% 
+  oneway.test(LOE.Temp_C ~ Watershed, data = ., var.equal = FALSE)
+
+gh2024 <- treat2 %>% 
+  filter(Year == 2024) %>%
+  games_howell_test(., LOE.Temp_C ~ Watershed)
+summary(gh2024)
+write.csv(gh2024, "output/acrossyears.gameshowelltest.csv",row.names = FALSE) 
+```
+
+In 2024, Scott Creek had statistically higher thermal tolerance than Big Creek and Carmel River.
+
+**Within 2025:**
+
+```{r}
+treat2 %>% 
+  filter(Year == 2025) %>% 
+  oneway.test(LOE.Temp_C ~ Watershed, data = ., var.equal = FALSE)
+
+gh2025 <- treat2 %>% 
+  filter(Year == 2025) %>%
+  games_howell_test(., LOE.Temp_C ~ Watershed)
+```
+
+In 2025, Carmel River had statistically higher thermal tolerance than the other sites (p\<\<\<0.05). Scott Creek and Big Creek are not different from one another.
+
+#### Results text from ANOVA:
+
+We compared sites within years using a Welch's ANOVA and Games-Howell posthoc test (R package rstatix). In 2024, Scott Creek population was statistically significantly more thermally tolerant than the other two locations (p \< 0.05). In 2025, Carmel River fish had significantly higher thermal tolerance than the other locations (p\<0.05).
+
+------------------------------------------------------------------------
+
+#### Compare sites across years
+
+```{r}
+# Carmel River
+treat2 %>% 
+  filter(Watershed == "Carmel River") %>% 
+  oneway.test(LOE.Temp_C ~ Year, data = ., var.equal = FALSE)
+
+cr_gh <- treat2 %>% 
+  filter(Watershed == "Carmel River") %>%
+  games_howell_test(., LOE.Temp_C ~ Year);cr_gh
+
+# Very significant!
+```
+
+```{r}
+# Big Creek
+treat2 %>% 
+  filter(Watershed == "Big Creek") %>% 
+  oneway.test(LOE.Temp_C ~ Year, data = ., var.equal = FALSE)
+
+bc_gh <- treat2 %>% 
+  filter(Watershed == "Big Creek") %>%
+  games_howell_test(., LOE.Temp_C ~ Year);bc_gh
+
+# not significant!
+```
+
+```{r}
+# Scott Creek
+treat2 %>% 
+  filter(Watershed == "Scott Creek") %>% 
+  oneway.test(LOE.Temp_C ~ Year, data = ., var.equal = FALSE)
+
+sc_gh <- treat2 %>% 
+  filter(Watershed == "Scott Creek") %>%
+  games_howell_test(., LOE.Temp_C ~ Year);sc_gh
+```
+
+### Results of CTMax
+
+The only location with between year differences is Carmel River. Why is that?
+
+------------------------------------------------------------------------
+
+## Plot of CTmax data with Significance
+
+```{r}
+library(ggpubr)
+p <- treat2 %>% 
+  filter(Year == 2024) %>% 
+  group_by(Watershed) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = as.factor(Watershed), y = LOE.Temp_C, fill = Watershed)) +
+
+  geom_violin(alpha = 0.5)+
+  geom_jitter(width = .15,
+    size = 1.75,
+    alpha = 0.6) +
+
+  facet_wrap(~Year) +
+
+  
+  scale_fill_manual(values = fig1_palette) +
+
+  labs(
+    x = "Watershed",
+    y = "LOE Temp (°C)"
+  ) +
+
+  theme_bw() +
+  theme(
+    text = element_text(family = "Times New Roman", size = 8),
+    axis.text = element_text(size = 6),
+    axis.title = element_text(size = 7),
+    strip.text = element_text(size = 7),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "bottom",
+    legend.spacing.y = unit(0.05, "cm"),
+  legend.margin = margin(t = 0, b = 0, unit = "cm"),
+  legend.box.margin = margin(0, 0, 0, 0)
+  )+
+  guides(
+  color = guide_legend(nrow = 2, byrow = TRUE,
+                       keywidth = 0.4,
+    keyheight = 0.4)
+);p
+
+sig2024 <- gh2024 %>%
+  filter(!p.adj.signif == "ns") %>% 
+  mutate(y.position = c(31.75, 32))
+
+p+
+  stat_pvalue_manual(
+    sig2024,
+    label = "p.adj.signif",
+    y.position = "y.position",
+    inherit.aes = FALSE
+  )
+colnames(gh2024)
+```
+
+```{r}
+# 2025
+
+
+sc_gh <- treat2 %>% 
+  filter(Watershed == "Scott Creek") %>%
+  games_howell_test(., LOE.Temp_C ~ Year);sc_gh
+p <- treat2 %>% 
+  filter(Year == 2025) %>% 
+  group_by(Watershed) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = as.factor(Watershed), y = LOE.Temp_C, fill = Watershed)) +
+
+  geom_violin(alpha = 0.5)+
+  geom_jitter(width = .15,
+    size = 1.75,
+    alpha = 0.6) +
+
+  facet_wrap(~Year) +
+
+  
+  scale_fill_manual(values = fig1_palette) +
+
+  labs(
+    x = "Watershed",
+    y = "LOE Temp (°C)"
+  ) +
+
+  theme_bw() +
+  theme(
+    text = element_text(family = "Times New Roman", size = 8),
+    axis.text = element_text(size = 6),
+    axis.title = element_text(size = 7),
+    strip.text = element_text(size = 7),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "bottom",
+    legend.spacing.y = unit(0.05, "cm"),
+  legend.margin = margin(t = 0, b = 0, unit = "cm"),
+  legend.box.margin = margin(0, 0, 0, 0)
+  )+
+  guides(
+  color = guide_legend(nrow = 2, byrow = TRUE,
+                       keywidth = 0.4,
+    keyheight = 0.4)
+);p
+
+sig2025 <- gh2025 %>%
+  filter(!p.adj.signif == "ns") %>% 
+  mutate(y.position = c(31.9, 32))
+
+p+
+  stat_pvalue_manual(
+    sig2025,
+    label = "p.adj.signif",
+    y.position = "y.position",
+    inherit.aes = FALSE
+  )
+
+```
+
+```{r}
+# Compare sites across year
+treat2 %>% 
+  oneway.test(LOE.Temp_C ~ WatershedYear, data = ., var.equal = FALSE)
+
+wsy_gh <- treat2 %>% 
+  games_howell_test(., LOE.Temp_C ~ WatershedYear);wsy_gh
+
+
+
+p <- treat2 %>% 
+  ggplot(aes(x = as.factor(WatershedYear), y = LOE.Temp_C, fill = Watershed, shape = Year)) +
+
+  geom_violin(alpha = 0.5)+
+  geom_jitter(width = .05,
+    size = 1.25,
+    alpha = 0.6) +
+  
+  scale_fill_manual(values = fig1_palette) +
+
+  labs(
+    x = "Watershed",
+    y = "LOE Temp (°C)"
+  ) +
+
+  theme_bw() +
+  theme(
+    text = element_text(family = "Times New Roman", size = 8),
+    axis.text = element_text(size = 6),
+    axis.title = element_text(size = 7),
+    strip.text = element_text(size = 7),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "bottom",
+    legend.spacing.y = unit(0.05, "cm"),
+  legend.margin = margin(t = 0, b = 0, unit = "cm"),
+  legend.box.margin = margin(0, 0, 0, 0)
+  )+
+  guides(
+  color = guide_legend(nrow = 2, byrow = TRUE,
+                       keywidth = 0.4,
+    keyheight = 0.4)
+);p
+
+sig_wsy_gh <- wsy_gh %>% 
+  filter(!p.adj.signif == "ns") %>% 
+  mutate(y.position = c(32, 31.9, 32.1, 32.2,32.3,32.4,32.5))
+
+sigplot_ALL <- p+
+  stat_pvalue_manual(
+    sig_wsy_gh,
+    label = "p.adj.signif",
+    y.position = "y.position",
+    inherit.aes = FALSE
+  ); sigplot_ALL
+
+ggsave("output/sigplot_ALL.png", plot = sigplot_ALL, height = 4, width = 5, units = "in")
+```
+
+## Basic Data Analysis of Length
+
+### Normality check
+
+To fit a linear model with length, I need to test the four assumptions of general linear models.
+
+```{r}
+
+```
+
+## Stream Temperature
+
+```{r}
+
+```

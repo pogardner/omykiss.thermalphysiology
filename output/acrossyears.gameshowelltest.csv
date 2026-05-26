@@ -1,0 +1,4 @@
+".y.","group1","group2","estimate","conf.low","conf.high","p.adj","p.adj.signif"
+"LOE.Temp_C","Big Creek","Carmel River",0.257875457875457,0.0890853084405897,0.426665607310324,0.001,"***"
+"LOE.Temp_C","Big Creek","Scott Creek",0.169966555183947,0.0544773790696552,0.285455731298239,0.002,"**"
+"LOE.Temp_C","Carmel River","Scott Creek",-0.0879089026915096,-0.24762773824591,0.0718099328628908,0.388,"ns"
