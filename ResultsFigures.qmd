@@ -1,0 +1,499 @@
+---
+title: "Results figures"
+format: html
+editor: visual
+---
+
+## Chapter 1: Results Figures
+
+The goal of this script is to present all the relevant analyses and figures to be included in the Chapter 1 manuscript. Chapter 1 seeks to answer the following questions:
+
+1.  What is the critical thermal maximum of five (three?) coastal CA populations in response to a common, ecologically relevant acute temperature treatment?
+
+2.  Does age/size class for juvenile steelhead impact upper thermal limits? (will increasingly variable temps disproportionately impact size classes)
+
+3.  Is there evidence for the role of plasticity and local adaptation in determining upper thermal limits?
+
+This document follows the order of the above questions.
+
+### Libraries
+
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(lme4)
+library(here)
+library(extrafont)
+library(RColorBrewer)
+```
+
+### Data
+
+```{r}
+# Load in data --------------------------------------------------------
+comp <- read.csv(here("data/IRA.thermaltolerance.compileddata.csv"))
+head(comp)
+
+## Wrangling -----------------------------------------------------------
+comp_clean = comp %>% 
+  rename(Watershed = Location)
+unique(comp_clean$Watershed)
+
+# rename locations to match the watershed name
+comp_clean = comp_clean %>% 
+  mutate(Watershed = case_when(
+    Watershed == "Big Sur" ~ "Big Creek", # Big Creek in Big Sur
+    Watershed == "Napa" ~ "Napa River", # Napa River
+    Watershed == "E Austin" ~ "Russian River", # Russian River
+    TRUE~ Watershed # keep Scott Creek and Carmel River the same
+  ))
+str(comp_clean)
+
+comp_clean$Date = as.Date(comp$Date, format = "%m/%d/%Y") #convert date to date structure
+# Treatment should be a factor
+comp_clean$Treatment = as.factor(comp_clean$Treatment)
+
+# check for NA values
+sum(is.na(comp_clean))
+# there is one NA value in the length column
+
+# add a year column
+comp_clean <- comp_clean %>% 
+  mutate(Year = year(Date))
+comp_clean$Year = as.factor(comp_clean$Year)
+comp_clean$Mass_g <- as.numeric(comp_clean$Mass_g)
+
+# Add a LocationYear column
+comp_clean <- comp_clean %>% 
+  unite(WatershedYear, Watershed, Year, sep = " ", remove= FALSE)
+
+## Filtered dataset ----------------------------------------------------------------------------------------------
+treat2 = comp_clean %>% 
+  filter(Treatment == 2) %>% 
+  filter(Watershed %in% c("Big Creek", "Carmel River", "Scott Creek"))
+
+treat2ALL = comp_clean %>% 
+  filter(Treatment == 2)
+
+```
+
+### Color Palettes
+
+```{r}
+fig1_palette= c(
+  "Big Creek"="#744253",
+  "Scott Creek"="#496A81",
+  "Carmel River"="#9BC53D")
+
+fig2_palette = c(
+  "Big Creek 2024"="#C89F9C",
+  "Big Creek 2025" = "#B36A5E",
+  "Scott Creek 2025"="#083d77",
+  "Scott Creek 2024"="#76949f",
+  "Carmel River 2024" = "#9BC53D",
+  "Carmel River 2025" = "chartreuse4",
+  "Russian River 2025" = "purple",
+  "Napa River 2025" = "orange"
+)
+
+fig3_palette= c(
+  "Big Creek"="#744253",
+  "Scott Creek"="#496A81",
+  "Carmel River"="#9BC53D",
+  "Napa River"="blue",
+  "Russian River" = "purple")
+```
+
+## Part 1: Quantifying CTmax for 5 CA steelhead populations
+
+First, I will make a figure showing CTmax for each site and year.
+
+```{r}
+# set levels according to latitude
+# 1. Define your explicit order
+lat_order <- c("Big Creek", "Carmel River", "Scott Creek","Napa River","Russian River")
+
+# 2. Re-level the data frame column
+treat2ALL$Watershed <- factor(treat2ALL$Watershed, levels = lat_order)
+
+
+# lat and year order
+latyear_order <- c("Big Creek 2024", "Big Creek 2025","Carmel River 2024", "Carmel River 2025", "Scott Creek 2024","Scott Creek 2025","Napa River 2025","Russian River 2025")
+treat2ALL$WatershedYear <- factor(treat2ALL$WatershedYear, levels = latyear_order)
+```
+
+```{r}
+
+RColorBrewer::display.brewer.all()
+
+p <- treat2ALL %>% 
+  ggplot(aes(x = as.factor(Year), 
+             y = LOE.Temp_C, fill = WatershedYear)) +
+  
+  geom_violin(alpha = 0.75)+
+  geom_jitter(width = .05,
+              size = 2.5,
+              alpha = 0.75) +
+  
+  scale_fill_brewer(palette = "Paired") +
+  
+  labs(
+    x = "Sample Year",
+    y = "LOE Temp (°C)"
+  ) +
+  
+  theme_bw() +
+  theme(
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size=10),
+    axis.text.y = element_text(size=10),
+    strip.text = element_text(size = 10),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "none"
+  )+
+  guides(
+    color = guide_legend(nrow = 2, byrow = TRUE,
+                         keywidth = 0.4,
+                         keyheight = 0.4)
+  )+
+  facet_grid(~Watershed);p
+
+ggsave("output/treat2ALLctmax.png", plot = p, height = 5, width = 6, dpi= 300, units = "in")
+```
+
+## Part 2: Length effect
+
+I assumed the effect of length on CTmax would be conserved across populations and not vary intraspecifically. This is because there is no evidence to suggest otherwise, and also to increase sample size.
+
+```{r}
+ggplot(treat2ALL, aes(x= Length_mm, y = LOE.Temp_C))+
+  geom_point(size=2,
+             alpha = 0.75)+
+  geom_smooth(method= lm)+
+  labs(x= "Critical Thermal Maximum (°C)",
+       y= "Fork Length (mm)")+
+  theme_bw()+
+  theme(
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size=10),
+    axis.text.y = element_text(size=10),
+    strip.text = element_text(size = 10),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "none"
+  )
+```
+
+Check for normality- might need to a generalized linear model!
+
+```{r}
+fit = lm(LOE.Temp_C~Length_mm, data=treat2ALL)
+
+# checks
+par(mfrow=c(2,2))
+plot(fit)
+
+#Normalityofresiduals:
+shapiro.test(resid(fit))
+# p > 0.05 (barely) - seems to be fairly normal
+
+#Linearity of the relationship:
+summary(lm(resid(fit)~poly(predict(fit),2)))
+# the second term (,2) is not significant, so linear enough
+
+#Homoscedasticity (constant variance):
+library(lmtest)
+bptest(fit)
+# slightly heteroskedastic (p = 0.04)
+
+#Independence of residuals for temporal data
+#(i.e.data points taken on successive days/weeks/etc.);
+#your response variable needs to be sorted by date:
+pacf(resid(fit))
+
+# this is showing that individuals more close in size are more likely to be similar in CTmax. I don't think this one is relevant, but will check
+```
+
+It seems we can assume normality, and use a linear model. There is some slight violation of homoskedasticity and independence, but for interpretation and biological purposes, we are going to be ok with that.
+
+```{r}
+summary(fit)
+confint(fit, level=0.95) # extracet 95% CI's
+
+```
+
+The effects is small but significant (p\<0.05, \*\*\*). With every mm increase in fork length, CTmax decreases by -0.0031°C (CI ∓ 0.001596). Length explains \~8% of the variation in CTmax.
+
+```{r}
+library(ggpubr)
+sizeeffect<- ggplot(data=treat2ALL,aes(x=Length_mm,y=LOE.Temp_C))+
+  geom_point(size= 2)+
+  geom_smooth(method="lm",colour="purple")+
+  stat_cor(label.y = c(32.15),color="purple")+
+  stat_regline_equation(label.y = c(32),color="purple")+
+  labs(x= "Fork length (mm)",
+       y = "Critical Thermal Maximum (°C)")+
+  theme_bw()+
+   theme(
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size=10),
+    axis.text.y = element_text(size=10),
+    strip.text = element_text(size = 10),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "none"
+  ); sizeeffect
+
+#ggsave("output/sizeeffect.png", plot = sizeeffect, height = 5, width = 6, dpi= 300, units = "in")
+  
+```
+
+Now we just need a raw plot of the size distributions! Let's try ggridges and a bar plot
+
+```{r}
+## GGridges
+library(ggridges)
+
+ggridges_size<- ggplot(treat2ALL, aes(x= Length_mm, y= Watershed, fill = WatershedYear))+
+  geom_density_ridges(alpha = 0.75)+
+  scale_fill_brewer(palette = "Paired") +
+  labs(x="Length (mm)",
+       y = "",
+       fill= "Site/Year")+
+  theme_bw()+
+    theme(
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.title = element_text(size = 10),
+    axis.title.x = element_text(hjust = 0.5),
+    axis.text.x = element_text(size=10),
+    axis.text.y = element_text(size=10),
+    strip.text = element_text(size = 10),
+    panel.spacing = unit(0.4, "lines")
+  ); ggridges_size
+#ggsave("output/ggridges_size.png", plot = ggridges_size, height = 3.5, width = 6, units = "in", dpi= 300)
+```
+
+## Part 3: Evidence for the role of plasticity and local adaptation in upper thermal limits
+
+-   GLM: Effect of fish size, 7DADM, and Watershed (both a random and fixed effect)
+
+    -   7DADM is a management relevant metric
+
+    -   Fish size generally seems to decrease thermal tolerance
+
+### Load in stream temp data
+
+```{r}
+# Load in data
+carmelriver <- read.csv(here("data/Stream temperature/carmel.mpwmd.Aug2024_Sept2025.csv"))
+scottcreek24 <- read.csv(here("data/Stream temperature/BigCreek.ScottCreek.StreamTemp.2024-09-03.csv"))
+scottcreek25 <- read.csv(here("data/Stream temperature/ScottCreekBigCreekEfish_Temp_Paige_20250520-20251014.csv"))
+bigcreek24 <- read.csv(here("data/Stream temperature/BigCreek.8.26.24.csv"))
+bigcreek25 <- read.csv(here("data/Stream temperature/22095921_GAUGE_POOL_12DEC2025.csv"))
+eaustin25 <- read.csv(here("data/Stream temperature/eastaustin.streamtemphobo.may_sept2025.csv"))
+napa25 <- read.csv(here("data/Stream temperature/Dry creek Napa  2026-06-17 13_24_54 PDT.csv"))
+
+complete_function <- function(df, location) {
+  df %>% 
+    # rename columns
+    dplyr::rename(
+      Temp_C = dplyr::any_of(c("Temperature...C.","Temperature....C","Temperature_C","Temperature..C.","Temperature.....C.")), # Rename the temperature column
+      Date_Time = dplyr::any_of(c("Date.Time..PDT.","DateTime_GMT0700","timestamp","Timestamp","Date.Time..PDT.PST.")) # rename the Date and Time column
+    ) %>% 
+    # get rid of unwanted columns
+    dplyr::select(-any_of(c("X.","X","Light_lux","Light..lux.","Light...lux","Light....lux."))
+                  ) %>% 
+    # Restructure the Date_Time column and add separate Date and Time columns
+    mutate(
+      Date_Time = lubridate::parse_date_time(
+        trimws(Date_Time),
+        orders = c(  "mdY HMS",
+    "mdY HM",
+    "ymd HMS",
+    "ymd HM")
+      ),
+      Date = as.Date(Date_Time),
+      Time = hms::as_hms(Date_Time), #standardize as hh:mm to avoid errors
+      Year = as.factor(year(Date_Time)), # add a Year column
+      Location = location, # when applying this, write the location name in "" within the function call 
+           ) 
+}
+
+
+bcst24_cleaned <- complete_function(bigcreek24, "Big Creek") 
+bcst25_cleaned <- complete_function(bigcreek25, "Big Creek")
+scst24_cleaned <- complete_function(scottcreek24, "Scott Creek")
+scst25_cleaned <- complete_function(scottcreek25, "Scott Creek")
+dc25_cleaned <- complete_function(napa25, "Napa River")
+dc25_cleaned <- dc25_cleaned %>% 
+  dplyr::select(c("Date_Time","Temp_C","Date","Time","Year","Location"))
+colnames(ea25_cleaned)
+ea25_cleaned<- complete_function(eaustin25,"Russian River")
+
+# Cleaning up the Carmel River data frame
+#a) unite date and time columns to Date_Time
+carmelriver_clean <- carmelriver %>% 
+  unite(Date_Time, Date, Time, sep = " ", remove= FALSE) %>%
+  # b) convert F to C
+  mutate(Temp_C= (Temp..F.-32)*5/9) %>% 
+  # get rid of fahrenheit and site columns
+  dplyr::select(-c(Temp..F., Site,Date,Time))
+
+cr_cleaned = carmelriver_clean %>% 
+  mutate(
+      Date_Time = mdy_hm(Date_Time))
+cr_cleaned = cr_cleaned %>% 
+  mutate(Date = as.Date(Date_Time),
+         Time = hms::as_hms(Date_Time), #standardize as hh:mm to avoid errors
+      Year = as.factor(year(Date_Time)))
+
+#NOTE: get rid of first 58 rows of Big Sur 2025 data
+bcst25_cleaned <- bcst25_cleaned[-c(1:58),]
+
+#We also only need Scott Creek 2025 until Aug 20 and Big Sur 2025 through Aug 1.
+bcst25_cleaned <- bcst25_cleaned %>% filter(Date <= "2025-08-01")
+
+scst25_cleaned <- scst25_cleaned %>% filter(Date <= "2025-08-20")
+
+# separate Carmel into two data frames
+cr24_cleaned <- cr_cleaned %>% 
+  filter(Date < as.Date("2024-10-31"))
+# filter just June-Aug 27
+cr25_cleaned <- cr_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-06-01"),as.Date("2025-08-27") ))
+```
+
+Now we need to filter the data down to 8 days before experiments to calculate 7 day averages.
+
+```{r}
+# first, filter each data frame to the required dates
+
+# Big Creek 2024: 08-20 - 08-26
+# this data set is annoyingly truncated. Look to see if there is more data!!
+bcst24_7d <- bcst24_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2024-08-20"),as.Date("2024-08-26") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Big Creek",
+         WatershedYear = "Big Creek 2024") %>% 
+  ungroup()
+  
+
+# Big Creek 2025
+str(bcst25_cleaned)
+bcst25_7d <- bcst25_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-07-24"),as.Date("2025-07-30") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Big Creek",
+         WatershedYear = "Big Creek 2025") %>% 
+  ungroup()
+
+# Scott Creek 2024 experiments conducted9/5/24
+scst24_7d <- scst24_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2024-08-28"),as.Date("2024-09-03") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Scott Creek",
+         WatershedYear = "Scott Creek 2024") %>% 
+  ungroup()
+
+# Scott Creek 2025: experiments conducted 8/20/2025
+scst25_7d <- scst25_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-08-12"),as.Date("2025-08-18") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Scott Creek",
+         WatershedYear = "Scott Creek 2025") %>% 
+  ungroup()
+
+# Carmel River 2024 experiments conducted 10/30/24
+colnames(cr24_cleaned)
+crst24_7d <- cr24_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2024-10-22"),as.Date("2024-10-28") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Carmel River",
+         WatershedYear = "Carmel River 2024") %>% 
+  ungroup()
+
+# Carmel River 2025
+crst25_7d <- cr25_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-08-19"),as.Date("2025-08-25") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Carmel River",
+         WatershedYear = "Carmel River 2025") %>% 
+  ungroup()
+
+# Napa River 2025
+dcst25_7d <- dc25_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-07-17"),as.Date("2025-07-23") )) %>% 
+  group_by(Date) %>% 
+  filter(!is.na(Temp_C)) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Napa River",
+         WatershedYear = "Napa River 2025") %>% 
+  ungroup()
+
+# Russian River 2025
+east25_7d <- ea25_cleaned %>% 
+    filter(between(as.Date(Date), as.Date("2025-09-03"),as.Date("2025-09-9") )) %>% 
+  group_by(Date) %>% 
+  filter(!is.na(Temp_C)) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Russian River",
+         WatershedYear = "Russian River 2025") %>% 
+  ungroup()
+
+# Combine!
+stream7d = rbind(bcst24_7d, bcst25_7d, scst24_7d, scst25_7d, crst24_7d,crst25_7d, dcst25_7d,east25_7d)
+
+stream7d_sumALL = stream7d %>% 
+  group_by(WatershedYear) %>% 
+  summarize(DADM7 = mean(daily_max),
+            sd_DADM7 = sd(daily_max),
+            DADA7 = mean(daily_avg),
+            sd_DADA7 = sd(daily_avg),
+            DADMin7 = mean(daily_min),
+            DADDiel7 = mean(daily_diel))%>% 
+  ungroup()
+
+# save the data frame for other uses
+write.csv(stream7d_sumALL, "data/stream7d_sumALL.csv", row.names = FALSE)
+
+# Combine with treat2ALL
+treat2ALL_st = full_join(treat2ALL, stream7d_sumALL, by = "WatershedYear")
+```
+
+### Models, finally!
+
+```{r}
+mod1.1 <- lmer(LOE.Temp_C ~ Watershed*DADM7 + (1|Watershed,Year), data = treat2ALL_st)
+```

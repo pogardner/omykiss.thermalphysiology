@@ -121,8 +121,6 @@ treat2 = comp_clean %>%
   filter(Watershed %in% c("Big Creek", "Carmel River", "Scott Creek"))
 ```
 
-#### Stream Temperature
-
 ### Color Palettes
 
 ```{r}
@@ -496,7 +494,7 @@ p+
     y.position = "y.position",
     inherit.aes = FALSE
   )
-colnames(gh2024)
+
 ```
 
 ```{r}
@@ -574,8 +572,8 @@ p <- treat2 %>%
 
   geom_violin(alpha = 0.5)+
   geom_jitter(width = .05,
-    size = 1.25,
-    alpha = 0.6) +
+    size = 2,
+    alpha = 0.5) +
   
   scale_fill_manual(values = fig1_palette) +
 
@@ -586,10 +584,10 @@ p <- treat2 %>%
 
   theme_bw() +
   theme(
-    text = element_text(family = "Times New Roman", size = 8),
-    axis.text = element_text(size = 6),
-    axis.title = element_text(size = 7),
-    strip.text = element_text(size = 7),
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.text = element_blank(),
+    axis.title = element_text(size = 10),
+    strip.text = element_text(size = 10),
     panel.spacing = unit(0.4, "lines"),
     legend.position = "bottom",
     legend.spacing.y = unit(0.05, "cm"),
@@ -614,7 +612,7 @@ sigplot_ALL <- p+
     inherit.aes = FALSE
   ); sigplot_ALL
 
-ggsave("output/sigplot_ALL.png", plot = sigplot_ALL, height = 4, width = 5, units = "in")
+ggsave("output/sigplot_ALL.png", plot = sigplot_ALL, height = 4, width = 5.25, units = "in")
 ```
 
 ## Basic Data Analysis of Length
@@ -623,12 +621,368 @@ ggsave("output/sigplot_ALL.png", plot = sigplot_ALL, height = 4, width = 5, unit
 
 To fit a linear model with length, I need to test the four assumptions of general linear models.
 
+#### Does size distribution differ between locations?
+
+I could test for normality, but Welch's ANOVA and GH post hoc are fairly robust to that.
+
 ```{r}
+oneway.test(Length_mm ~ WatershedYear, data = treat2, var.equal = FALSE)
+gh_length<- games_howell_test(treat2, Length_mm ~ WatershedYear); gh_length
+
 
 ```
 
-## Stream Temperature
+```{r}
+p2 <- treat2 %>% 
+  ggplot(aes(x = as.factor(WatershedYear), y = Length_mm, fill = Watershed, shape = Year)) +
+
+  geom_violin(alpha = 0.7)+
+  geom_jitter(width = .05,
+    size = 2,
+    alpha = 0.5) +
+  
+  scale_fill_manual(values = fig1_palette) +
+
+  labs(
+    x = "Watershed",
+    y = "Lenght (mm)"
+  ) +
+
+  theme_bw() +
+  theme(
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.text = element_blank(),
+    axis.title = element_text(size = 10),
+    strip.text = element_text(size = 10),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "bottom",
+    legend.spacing.y = unit(0.05, "cm"),
+  legend.margin = margin(t = 0, b = 0, unit = "cm"),
+  legend.box.margin = margin(0, 0, 0, 0)
+  )+
+  guides(
+  color = guide_legend(nrow = 2, byrow = TRUE,
+                       keywidth = 0.4,
+    keyheight = 0.4)
+);p2
+
+sig_length <- gh_length %>% 
+  filter(!p.adj.signif == "ns") %>% 
+  mutate(y.position = c(215,225,235,245,255, 265))
+
+sigplot_length <- p2+
+  stat_pvalue_manual(
+    sig_length,
+    label = "p.adj.signif",
+    y.position = "y.position",
+    inherit.aes = FALSE
+  ); sigplot_length
+
+ggsave("output/sigplot_length.png", plot = sigplot_ALL, height = 4, width = 5.25, units = "in")
+```
+
+#### Linear model for effect of size and location on CTmax
 
 ```{r}
+length_mod <- lm(LOE.Temp_C ~ Length_mm, data = treat2); summary(length_mod)
 
+add_mod <- lm(LOE.Temp_C ~ Length_mm + WatershedYear, data = treat2); summary(add_mod)
+
+int_mod <- lm(LOE.Temp_C ~ Length_mm*WatershedYear, data = treat2); summary(int_mod)
+```
+
+The current plan is to upload the stream temperature data so that it is in usable form, then use that to build the best model. After that, I can check the data for normality to see if a linear model is a good fit. If not, I will use a generalized linear model.
+
+------------------------------------------------------------------------
+
+## Stream Temperature
+
+I want to maintain as much of the stream temperature data as possible in the 1-2 weeks ahead of experiments. It's important to note that the limiting factor is Big Creek in Big Sur in 2024, in which we only have a week of data, which is a limitation of the data set. We have no reason to believe that the stream temperature would have deviated from usual at that site preceding the experiments. Additionally, the Carmel River SHW site had a temp logger placed by MPWMD that blew out in 2023 and 2024, so there is a gap in the historic data set.
+
+The first step will be recombining the data that I have into a new summary data file. I already have one from a previous script uploaded, but I want to expand the data set for Scott Creek in 2024 and Carmel River 2025.
+
+```{r}
+carmelriver <- read.csv(here("data/Stream temperature/carmel.mpwmd.Aug2024_Sept2025.csv"))
+scottcreek24 <- read.csv(here("data/Stream temperature/BigCreek.ScottCreek.StreamTemp.2024-09-03.csv"))
+scottcreek25 <- read.csv(here("data/Stream temperature/ScottCreekBigCreekEfish_Temp_Paige_20250520-20251014.csv"))
+bigcreek24 <- read.csv(here("data/Stream temperature/BigCreek.8.26.24.csv"))
+bigcreek25 <- read.csv(here("data/Stream temperature/22095921_GAUGE_POOL_12DEC2025.csv"))
+```
+
+#### First, make a list of dataframes
+
+this part is a carryover from another script- not sure why I need to do this yet.
+
+```{r}
+#df_list <- list(bcst24,bcst25,crst24,crst25,scst24,scst25,east,dcst)
+```
+
+#### A) Clean the column names so that the temperature column is always Temp_C and the date and time column is Date_Time
+
+#### B) Get rid of unnecessary columns
+
+#### C) Restructure the Date_Time column
+
+```{r}
+# something is up with Scott Creek 2024 data format. Going to restructure it and try to fix it. 
+```
+
+```{r}
+complete_function <- function(df, location) {
+  df %>% 
+    # rename columns
+    dplyr::rename(
+      Temp_C = dplyr::any_of(c("Temperature...C.","Temperature....C","Temperature_C","Temperature..C.")), # Rename the temperature column
+      Date_Time = dplyr::any_of(c("Date.Time..PDT.","DateTime_GMT0700","timestamp","Timestamp")) # rename the Date and Time column
+    ) %>% 
+    # get rid of unwanted columns
+    dplyr::select(-any_of(c("X.","X","Light_lux","Light..lux.","Light...lux"))
+                  ) %>% 
+    # Restructure the Date_Time column and add separate Date and Time columns
+    mutate(
+      Date_Time = lubridate::parse_date_time(
+        trimws(Date_Time),
+        orders = c(  "mdY HMS",
+    "mdY HM",
+    "ymd HMS",
+    "ymd HM")
+      ),
+      Date = as.Date(Date_Time),
+      Time = hms::as_hms(Date_Time), #standardize as hh:mm to avoid errors
+      Year = as.factor(year(Date_Time)), # add a Year column
+      Location = location, # when applying this, write the location name in "" within the function call 
+           ) 
+}
+```
+
+#### 3. Apply functions
+
+```{r}
+bcst24_cleaned <- complete_function(bigcreek24, "Big Creek") 
+bcst25_cleaned <- complete_function(bigcreek25, "Big Creek")
+scst24_cleaned <- complete_function(scottcreek24, "Scott Creek")
+#scott creek 24 still isn't parsing correctly with this function. but it has the dates I need. So for the sake of time, I 'm not going to fix it right now but will circle back. 
+scst25_cleaned <- complete_function(scottcreek25, "Scott Creek")
+```
+
+Carmel River needs a little extra cleaning! The Date and Time columns are already separate, and the temperature is in fahrenheit. The next steps:
+
+a\) unite Date and Time columns to Date_Time and check the format
+
+b\) convert the temp to Celsius. Get rid of site and Fahrenheit columns.
+
+```{r}
+# Cleaning up the Carmel River data frame
+#a) unite date and time columns to Date_Time
+carmelriver_clean <- carmelriver %>% 
+  unite(Date_Time, Date, Time, sep = " ", remove= FALSE) %>%
+  # b) convert F to C
+  mutate(Temp_C= (Temp..F.-32)*5/9) %>% 
+  # get rid of fahrenheit and site columns
+  dplyr::select(-c(Temp..F., Site,Date,Time))
+
+cr_cleaned = carmelriver_clean %>% 
+  mutate(
+      Date_Time = mdy_hm(Date_Time))
+cr_cleaned = cr_cleaned %>% 
+  mutate(Date = as.Date(Date_Time),
+         Time = hms::as_hms(Date_Time), #standardize as hh:mm to avoid errors
+      Year = as.factor(year(Date_Time)))
+
+
+```
+
+#### 3b. Check data frames and clean as needed
+
+##### NOTE: get rid of first 58 rows of Big Sur 2025 data
+
+```{r}
+bcst25_cleaned <- bcst25_cleaned[-c(1:58),]
+```
+
+We also only need Scott Creek 2025 until Aug 20 and Big Sur 2025 through Aug 1.
+
+```{r}
+bcst25_cleaned <- bcst25_cleaned %>% filter(Date <= "2025-08-01")
+
+scst25_cleaned <- scst25_cleaned %>% filter(Date <= "2025-08-20")
+```
+
+I need to separate Carmel River into two data frames: one that ends at 10/30/2024, and one that continues past that.
+
+Maybe I should use only June temps from Carmel River in 2025
+
+```{r}
+cr24_cleaned <- cr_cleaned %>% 
+  filter(Date < as.Date("2024-10-31"))
+# filter just June-Aug 27
+cr25_cleaned <- cr_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-06-01"),as.Date("2025-08-27") ))
+```
+
+\
+
+1.  Filter 8 days before experiment
+2.  Plot
+3.  Summary stats: 7DADM; 7DADA; 7D diel range
+4.  Plot
+
+#### Filter data 8 days before experiments
+
+I want to calculate seven daily average daily maximum, average, and diel range. Because I only have Big Creek in 2024 through 6 days, this will be slightly abbreviated.
+
+```{r}
+# first, filter each data frame to the required dates
+
+# Big Creek 2024: 08-20 - 08-26
+# this data set is annoyingly truncated. Look to see if there is more data!!
+bcst24_7d <- bcst24_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2024-08-20"),as.Date("2024-08-26") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Big Creek",
+         WatershedYear = "Big Creek 2024") %>% 
+  ungroup()
+  
+
+# Big Creek 2025
+str(bcst25_cleaned)
+bcst25_7d <- bcst25_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-07-24"),as.Date("2025-07-30") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Big Creek",
+         WatershedYear = "Big Creek 2025") %>% 
+  ungroup()
+
+# Scott Creek 2024 experiments conducted9/5/24
+scst24_7d <- scst24_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2024-08-28"),as.Date("2024-09-03") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Scott Creek",
+         WatershedYear = "Scott Creek 2024") %>% 
+  ungroup()
+
+# Scott Creek 2025: experiments conducted 8/20/2025
+scst25_7d <- scst25_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-08-12"),as.Date("2025-08-18") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Scott Creek",
+         WatershedYear = "Scott Creek 2025") %>% 
+  ungroup()
+
+# Carmel River 2024 experiments conducted 10/30/24
+colnames(cr24_cleaned)
+crst24_7d <- cr24_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2024-10-22"),as.Date("2024-10-28") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Carmel River",
+         WatershedYear = "Carmel River 2024") %>% 
+  ungroup()
+
+# Carmel River 2025
+crst25_7d <- cr25_cleaned %>% 
+  filter(between(as.Date(Date), as.Date("2025-08-19"),as.Date("2025-08-25") )) %>% 
+  group_by(Date) %>% 
+  summarize(daily_max = max(Temp_C),
+         daily_avg = mean(Temp_C),
+         daily_min = min(Temp_C)) %>% 
+  mutate(daily_diel = daily_max-daily_min,
+         Watershed = "Carmel River",
+         WatershedYear = "Carmel River 2025") %>% 
+  ungroup()
+
+```
+
+```{r}
+# Combine the data frames into one
+stream7d = rbind(bcst24_7d, bcst25_7d, scst24_7d, scst25_7d, crst24_7d,crst25_7d)
+# add a column count for total days
+```
+
+#### Plot 7d stream temperature
+
+```{r}
+colnames(stream7d)
+ggplot(stream7d, aes(x = Date, y = daily_avg, color = Watershed))+
+  geom_line()+
+  facet_wrap(~WatershedYear)
+```
+
+## Build model
+
+This model will use a glmm framework with the goal of building an effect size plot.
+
+Don't forget to check for correlation between variables using ggpairs!\
+
+```{r}
+stream7d_sum = stream7d %>% 
+  group_by(WatershedYear) %>% 
+  summarize(DADM7 = mean(daily_max),
+            sd_DADM7 = sd(daily_max),
+            DADA7 = mean(daily_avg),
+            sd_DADA7 = sd(daily_avg),
+            DADMin7 = mean(daily_min),
+            DADDiel7 = mean(daily_diel))%>% 
+  ungroup()
+
+# save the data frame for other uses
+write.csv(stream7d_sum, "data/stream7d_sum.ch1.csv", row.names = FALSE)
+```
+
+Leaving off on 5/28:
+
+-   add a column for number of days (n 1-7) to visualize plot better. Maybe add text with the date ranges for each site?
+
+-   DONE: make a new data frame that summarizes into one value that can be inputted into model
+
+-   add in historical data? (might as well!) - or just add in effect of location
+
+-   maybe location can be both a fixed and random effect in the model?
+
+-   ggpairs to look for correlation between variables
+
+### Look for autocorrelation between variables
+
+First, I need to combine data frames!
+
+```{r}
+# group by WatershedYear
+treat2_st = full_join(treat2, stream7d_sum, by = "WatershedYear")
+```
+
+Next, check for autocorrelation
+
+```{r}
+library(GGally)
+ggpairs(treat2_st, columns = c("Length_mm","DADM7","DADA7","Watershed","DADDiel7"))
+```
+
+From this ggpairs output, I should use only one stream temperature output at a time in my model.
+
+NEXT: Do I need to put in correlated variables from LOE.Temp_C and WatershedYear?
+
+## Model Design
+
+```{r}
+model = lmer(LOE.Temp_C ~ Length_mm + DADM7 + Watershed + (1|WatershedYear), 
+             data = treat2_st); summary(model)
 ```
