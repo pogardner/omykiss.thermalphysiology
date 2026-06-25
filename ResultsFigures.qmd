@@ -329,7 +329,7 @@ scst25_cleaned <- complete_function(scottcreek25, "Scott Creek")
 dc25_cleaned <- complete_function(napa25, "Napa River")
 dc25_cleaned <- dc25_cleaned %>% 
   dplyr::select(c("Date_Time","Temp_C","Date","Time","Year","Location"))
-colnames(ea25_cleaned)
+
 ea25_cleaned<- complete_function(eaustin25,"Russian River")
 
 # Cleaning up the Carmel River data frame
@@ -495,5 +495,116 @@ treat2ALL_st = full_join(treat2ALL, stream7d_sumALL, by = "WatershedYear")
 ### Models, finally!
 
 ```{r}
-mod1.1 <- lmer(LOE.Temp_C ~ Watershed*DADM7 + (1|Watershed,Year), data = treat2ALL_st)
+mod1.1 <- lmer(LOE.Temp_C ~ Watershed + DADM7 + 
+                # Length_mm +
+                 (1|Watershed), 
+               data = treat2ALL_st)
+summary(mod1.1)
+
+
 ```
+
+```{r}
+coef(mod1.1)
+VarCorr(mod1.1)
+resid(mod1.1)
+str(mod1.1)
+
+library(broom)
+
+df <- model.frame(mod1.1)
+df$.fitted <- predict(mod1.1)
+
+
+ggplot(df, aes(x=DADM7, y= LOE.Temp_C, color=Watershed)) +
+  geom_point()
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_summary(aes(y=.fitted), fun.y=mean, geom="line")
+```
+
+```{r}
+mod1.2 <- lmer(LOE.Temp_C ~ Watershed + DADM7 + 
+                + Length_mm +
+                 (1|Watershed), 
+               data = treat2ALL_st)
+summary(mod1.2)
+```
+
+```{r}
+AIC(mod1.1)
+AIC(mod1.2)
+```
+
+```{r}
+mod1.3 <- lmer(LOE.Temp_C ~ Watershed + 
+                 (1|Watershed), 
+               data = treat2ALL_st)
+summary(mod1.3)
+AIC(mod1.3)
+
+mod1.4 <- lmer(LOE.Temp_C ~ Watershed*DADM7 + 
+                # Length_mm +
+                 (1|Watershed), 
+               data = treat2ALL_st)
+summary(mod1.4)
+AIC(mod1.4)
+```
+
+Mod1.1 excludes the size effect and mod1.2 includes it. However, mod1.1 has a much lower AIC, and so is a better model. Mod1.3 is the worst, and mod1.4 is also rejected.
+
+```{r}
+# check the residuals
+df <- data.frame(predicted=predict(mod1.1), residual = residuals(mod1.1))
+ggplot(df,aes(sample=residual)) + stat_qq() + stat_qq_line()
+ggplot(df,aes(x=residual)) + geom_histogram(bins=20, color="black")
+```
+
+#### Let's try Bayes
+
+Is variation associated with changes in 7 DADM preceding experiments?
+
+```{r}
+library(brms)
+
+treat2_scaled <- treat2ALL_st %>% 
+  mutate(zLOE.Temp_C = scale(LOE.Temp_C),
+         zLength = scale(Length_mm),
+         zDADM7 = scale(DADM7))
+colnames(treat2_scaled)
+m.bayes1 <- 
+  brm(data = treat2_scaled, # Give the model the penguins data
+      # Choose a poisson distribution - THIS IS THE NEW PART!
+      family = gaussian(),
+      # Specify the model here. 
+      zLOE.Temp_C ~ 1 + 
+        zLength + 
+        zDADM7+
+        (1|Watershed),
+      # Here's where you specify parameters for executing the Markov chains
+      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
+      iter = 4000, warmup = 2000, chains = 4, cores = 4)#,
+      # Save the fitted model object as output - helpful for reloading in the output later
+     # file = "output/m.bayes1")
+plot(m.bayes1)
+```
+
+Do populations differ?
+
+```{m.bayes2 <-}
+  brm(data = treat2ALL_st, # Give the model the penguins data
+      # Choose a poisson distribution - THIS IS THE NEW PART!
+      family = Gamma(),
+      # Specify the model here. 
+      LOE.Temp_C ~ 1 + 
+        Watershed + 
+        Length_mm,
+      # Here's where you specify parameters for executing the Markov chains
+      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      # Save the fitted model object as output - helpful for reloading in the output later
+      file = "output/m.bayes2")
+```
+
+Dude I'm stuck! It doesn't make sense!!
+
+So I can't include both DADM7 and Watershed as descriptors. That is pseudoreplication. I get that now. But what should I do then???
