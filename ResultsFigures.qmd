@@ -228,9 +228,9 @@ The effects is small but significant (p\<0.05, \*\*\*). With every mm increase i
 
 ```{r}
 library(ggpubr)
-sizeeffect<- ggplot(data=treat2ALL,aes(x=Length_mm,y=LOE.Temp_C))+
+sizeeffect<- ggplot(data=treat2ALL,aes(x=Length_mm,y=LOE.Temp_C, color=Watershed))+
   geom_point(size= 2)+
-  geom_smooth(method="lm",colour="purple")+
+  geom_smooth(method="lm")+
   stat_cor(label.y = c(32.15),color="purple")+
   stat_regline_equation(label.y = c(32),color="purple")+
   labs(x= "Fork length (mm)",
@@ -242,8 +242,8 @@ sizeeffect<- ggplot(data=treat2ALL,aes(x=Length_mm,y=LOE.Temp_C))+
     axis.text.x = element_text(size=10),
     axis.text.y = element_text(size=10),
     strip.text = element_text(size = 10),
-    panel.spacing = unit(0.4, "lines"),
-    legend.position = "none"
+    panel.spacing = unit(0.4, "lines")#,
+   # legend.position = "none"
   ); sizeeffect
 
 #ggsave("output/sizeeffect.png", plot = sizeeffect, height = 5, width = 6, dpi= 300, units = "in")
@@ -495,12 +495,20 @@ treat2ALL_st = full_join(treat2ALL, stream7d_sumALL, by = "WatershedYear")
 ### Models, finally!
 
 ```{r}
-mod1.1 <- lmer(LOE.Temp_C ~ Watershed + DADM7 + 
-                # Length_mm +
-                 (1|Watershed), 
+mod1.1 <- lm(LOE.Temp_C ~ Watershed + DADM7 + 
+                Length_mm 
+                 , 
                data = treat2ALL_st)
 summary(mod1.1)
+AIC(mod1.1)
 
+```
+
+The model revealed a positive, significant relationship between LOE and 7DADM, where average LOE increased at a rate of 0.10°C for every degree increase in 7DADM (95% CI 0.07-0.13, p \<0.05). However, size did not impact CTmax at all, and there was additional variation between watersheds that was unexplained by 7DADM alone. This indicates an important role of long term thermal history in plasticity that an acute holding treatment does not overcome, and also points to a possibility of local adaptation.
+
+```{r}
+mod1.2 <- lmer(LOE.Temp_C ~ DADM7 + Length_mm + (1|Watershed), data = treat2ALL_st)
+summary(mod1.2)
 
 ```
 
@@ -516,18 +524,23 @@ df <- model.frame(mod1.1)
 df$.fitted <- predict(mod1.1)
 
 
-ggplot(df, aes(x=DADM7, y= LOE.Temp_C, color=Watershed)) +
-  geom_point()
-  stat_summary(fun.data=mean_se, geom="pointrange") +
-  stat_summary(aes(y=.fitted), fun.y=mean, geom="line")
-```
+modplot<- ggplot(df, aes(x=DADM7, y= LOE.Temp_C, color=Watershed)) +
+  geom_jitter(width = 0.075, size=3,alpha = 0.8)+
+  scale_color_manual(values= fig3_palette) +
+  labs(x= "7 Day Average Daily Maximum (°C)",
+       y = "Loss of Equilibrium Temp (°C)")+
+  theme_bw()+
+   theme(
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.title = element_text(size = 10),
+    axis.title.x = element_text(hjust = 0.5),
+    axis.text.x = element_text(size=10),
+    axis.text.y = element_text(size=10),
+    strip.text = element_text(size = 10),
+    panel.spacing = unit(0.4, "lines")
+  ); modplot
 
-```{r}
-mod1.2 <- lmer(LOE.Temp_C ~ Watershed + DADM7 + 
-                + Length_mm +
-                 (1|Watershed), 
-               data = treat2ALL_st)
-summary(mod1.2)
+ggsave("output/mod_output.png", plot = modplot, height = 3.5, width = 6, units = "in", dpi= 300)
 ```
 
 ```{r}
@@ -559,52 +572,70 @@ ggplot(df,aes(sample=residual)) + stat_qq() + stat_qq_line()
 ggplot(df,aes(x=residual)) + geom_histogram(bins=20, color="black")
 ```
 
-#### Let's try Bayes
+In writing this, report the results first of the one that I prefer. We used the model with watershed as a random effect. We also ran the model with watershed as a fixed effect and it didn't meaningfully change the output.
 
-Is variation associated with changes in 7 DADM preceding experiments?
+Justifying fixed vs random effects - if I want to know how watersheds are different,
+
+To do:
+
+-   the size estimate is wrong! there is no effect, shown by the lmer output.
+
+-   plot it! use predict function
+
+Alright so we're going to use Watershed as a fixed effect, so I can compare watersheds after adjusting for the effect of DADM7. Also, when using watershed as a random effect, the output is still the same (effect of 7DADM is the same, effect of length is the same, but now we have between watershed comparisons).
+
+## Make a table for pub
+
+This table should include CTmax +/- sd, 7DADM, 7DADA, fish length +/- sd, Watershed, Year
 
 ```{r}
-library(brms)
+library(gt)
+library(dplyr)
+library(webshot2)
+class(treat2ALL_st)
 
-treat2_scaled <- treat2ALL_st %>% 
-  mutate(zLOE.Temp_C = scale(LOE.Temp_C),
-         zLength = scale(Length_mm),
-         zDADM7 = scale(DADM7))
-colnames(treat2_scaled)
-m.bayes1 <- 
-  brm(data = treat2_scaled, # Give the model the penguins data
-      # Choose a poisson distribution - THIS IS THE NEW PART!
-      family = gaussian(),
-      # Specify the model here. 
-      zLOE.Temp_C ~ 1 + 
-        zLength + 
-        zDADM7+
-        (1|Watershed),
-      # Here's where you specify parameters for executing the Markov chains
-      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
-      iter = 4000, warmup = 2000, chains = 4, cores = 4)#,
-      # Save the fitted model object as output - helpful for reloading in the output later
-     # file = "output/m.bayes1")
-plot(m.bayes1)
+gt_table <- treat2ALL_st %>% 
+  group_by(Watershed, Year) %>% 
+  mutate(LOE_mean = mean(LOE.Temp_C),
+         LOE_sd = sd(LOE.Temp_C),
+         Length_mean = mean(Length_mm),
+         Length_sd = sd(Length_mm)) %>%
+  mutate(LOE_mean= sprintf("%.2f",LOE_mean),
+         LOE_sd= sprintf("%.2f",LOE_sd),
+         Length_mean= sprintf("%.2f",Length_mean),
+         Length_sd= sprintf("%.2f",Length_sd)) %>% 
+  ungroup() %>% 
+  unite(., col = "Length_mean_sd", Length_mean, Length_sd, sep = "±") %>% 
+  unite(., col = "LOE_mean_sd", LOE_mean, LOE_sd, sep = "±") %>% 
+  dplyr::select(Watershed, Year, Date, DADM7, DADA7, Length_mean_sd, LOE_mean_sd) %>% 
+  distinct() %>% 
+  arrange(Watershed, Year) %>%
+  group_by(Watershed) %>%
+  mutate(Watershed = if_else(row_number() == 1, Watershed, "")) %>% 
+  ungroup() %>% 
+  gt() %>% 
+  cols_align(align = "center") %>% 
+  tab_header(
+    title= "Recorded upper thermal limits"#,
+  #subtitle = 
+  ) %>% 
+  fmt_number(
+    columns = c(Watershed, Year, DADM7, DADA7, Length_mean_sd,LOE_mean_sd),
+    decimals = 2
+  ) %>% 
+  cols_label(
+    DADM7 = "7DADM (°C)",
+    DADA7= "7DADA (°C)",
+    Length_mean_sd = md("Length (mm)  \n ±sd"), #md required for line break to work
+    LOE_mean_sd = md("LOE Temp(°C)  \n ±sd")
+  ) %>% 
+  tab_style(
+    style= list(
+      cell_text(weight= "bold")
+    ),
+    locations = cells_column_labels(everything())
+  )
+gt_table
+
+gtsave(gt_table, "output/LOE_Length_7DADM.png")
 ```
-
-Do populations differ?
-
-```{m.bayes2 <-}
-  brm(data = treat2ALL_st, # Give the model the penguins data
-      # Choose a poisson distribution - THIS IS THE NEW PART!
-      family = Gamma(),
-      # Specify the model here. 
-      LOE.Temp_C ~ 1 + 
-        Watershed + 
-        Length_mm,
-      # Here's where you specify parameters for executing the Markov chains
-      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
-      iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      # Save the fitted model object as output - helpful for reloading in the output later
-      file = "output/m.bayes2")
-```
-
-Dude I'm stuck! It doesn't make sense!!
-
-So I can't include both DADM7 and Watershed as descriptors. That is pseudoreplication. I get that now. But what should I do then???
