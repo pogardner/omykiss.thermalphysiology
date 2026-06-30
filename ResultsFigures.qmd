@@ -98,11 +98,21 @@ fig2_palette = c(
 )
 
 fig3_palette= c(
-  "Big Creek"="#744253",
-  "Scott Creek"="#496A81",
-  "Carmel River"="#9BC53D",
-  "Napa River"="blue",
+  "Big Creek"="darkorange",
+  "Scott Creek"="cyan4",
+  "Carmel River"="chartreuse4",
+  "Napa River"="#F991CC",
   "Russian River" = "purple")
+
+fig4_palette= c(
+  "Big Creek 2024"="orange",
+  "Big Creek 2025"="darkorange2",
+  "Scott Creek 2024"="cyan",
+  "Scott Creek 2025"="cyan4",
+  "Carmel River 2024"="#9BC53D",
+  "Carmel River 2025"="chartreuse4",
+  "Napa River 2025"="#F991CC",
+  "Russian River 2025" = "purple")
 ```
 
 ## Part 1: Quantifying CTmax for 5 CA steelhead populations
@@ -136,7 +146,7 @@ p <- treat2ALL %>%
               size = 2.5,
               alpha = 0.75) +
   
-  scale_fill_brewer(palette = "Paired") +
+  scale_fill_manual(values= fig4_palette) +
   
   labs(
     x = "Sample Year",
@@ -252,13 +262,16 @@ sizeeffect<- ggplot(data=treat2ALL,aes(x=Length_mm,y=LOE.Temp_C, color=Watershed
 
 Now we just need a raw plot of the size distributions! Let's try ggridges and a bar plot
 
+### Size distribution
+
 ```{r}
 ## GGridges
 library(ggridges)
 
 ggridges_size<- ggplot(treat2ALL, aes(x= Length_mm, y= Watershed, fill = WatershedYear))+
   geom_density_ridges(alpha = 0.75)+
-  scale_fill_brewer(palette = "Paired") +
+  scale_fill_manual(values= fig4_palette)+
+  #scale_fill_brewer(palette = "Paired") +
   labs(x="Length (mm)",
        y = "",
        fill= "Site/Year")+
@@ -272,7 +285,7 @@ ggridges_size<- ggplot(treat2ALL, aes(x= Length_mm, y= Watershed, fill = Watersh
     strip.text = element_text(size = 10),
     panel.spacing = unit(0.4, "lines")
   ); ggridges_size
-#ggsave("output/ggridges_size.png", plot = ggridges_size, height = 3.5, width = 6, units = "in", dpi= 300)
+ggsave("output/ggridges_size.png", plot = ggridges_size, height = 3.5, width = 6, units = "in", dpi= 300)
 ```
 
 ## Part 3: Evidence for the role of plasticity and local adaptation in upper thermal limits
@@ -518,6 +531,7 @@ VarCorr(mod1.1)
 resid(mod1.1)
 str(mod1.1)
 
+
 library(broom)
 
 df <- model.frame(mod1.1)
@@ -525,7 +539,7 @@ df$.fitted <- predict(mod1.1)
 
 
 modplot<- ggplot(df, aes(x=DADM7, y= LOE.Temp_C, color=Watershed)) +
-  geom_jitter(width = 0.075, size=3,alpha = 0.8)+
+  geom_jitter(width = 0.075, size=2,alpha = 0.6)+
   scale_color_manual(values= fig3_palette) +
   labs(x= "7 Day Average Daily Maximum (°C)",
        y = "Loss of Equilibrium Temp (°C)")+
@@ -541,6 +555,8 @@ modplot<- ggplot(df, aes(x=DADM7, y= LOE.Temp_C, color=Watershed)) +
   ); modplot
 
 ggsave("output/mod_output.png", plot = modplot, height = 3.5, width = 6, units = "in", dpi= 300)
+
+
 ```
 
 ```{r}
@@ -599,7 +615,8 @@ gt_table <- treat2ALL_st %>%
   mutate(LOE_mean = mean(LOE.Temp_C),
          LOE_sd = sd(LOE.Temp_C),
          Length_mean = mean(Length_mm),
-         Length_sd = sd(Length_mm)) %>%
+         Length_sd = sd(Length_mm),
+         date_md = format(Date, "%m-%d")) %>%
   mutate(LOE_mean= sprintf("%.2f",LOE_mean),
          LOE_sd= sprintf("%.2f",LOE_sd),
          Length_mean= sprintf("%.2f",Length_mean),
@@ -607,7 +624,7 @@ gt_table <- treat2ALL_st %>%
   ungroup() %>% 
   unite(., col = "Length_mean_sd", Length_mean, Length_sd, sep = "±") %>% 
   unite(., col = "LOE_mean_sd", LOE_mean, LOE_sd, sep = "±") %>% 
-  dplyr::select(Watershed, Year, Date, DADM7, DADA7, Length_mean_sd, LOE_mean_sd) %>% 
+  dplyr::select(Watershed, Year, date_md, DADM7, DADA7, Length_mean_sd, LOE_mean_sd) %>% 
   distinct() %>% 
   arrange(Watershed, Year) %>%
   group_by(Watershed) %>%
@@ -624,14 +641,18 @@ gt_table <- treat2ALL_st %>%
     decimals = 2
   ) %>% 
   cols_label(
+    date_md = md("Date  \n (m-d)"),
     DADM7 = "7DADM (°C)",
     DADA7= "7DADA (°C)",
     Length_mean_sd = md("Length (mm)  \n ±sd"), #md required for line break to work
     LOE_mean_sd = md("LOE Temp(°C)  \n ±sd")
   ) %>% 
+  tab_options(
+    table.font.names = "Times New Roman"
+  ) %>% 
   tab_style(
     style= list(
-      cell_text(weight= "bold")
+      cell_text(weight= "bold", font = "Times New Roman")
     ),
     locations = cells_column_labels(everything())
   )
