@@ -1,0 +1,50 @@
+---
+title: "Genomics Prep"
+format: html
+editor: visual
+---
+
+## Genomics
+
+There were 12 samples excluded from the SNP analysis due to sample quality.
+
+1.  Trim up the dataframe and merge it with the phenotype data
+2.  Which package to use for sibship analysis? Check Carlos' papers (maybe Anne's? Or maybe in Abadia-Cordoso paper)
+3.  Quality check with some figures
+4.  Build a matrix (ha. like it's simple)
+5.  Quality check matrix a shit ton of times
+
+```{r}
+library(MCMCglmm)# for animal model
+library(tidyverse) 
+library(MCMCpack) # for animal model
+library(ggplot2) # plots
+library(here) # easy data file access for Git
+```
+
+```{r}
+# Phenotype and metadata
+ctmax <- read.csv(here("Genomics/Data/Omy5_inversion_metadata_merge.csv"))
+
+# SNP data using 96 SNP panel from Abadia-Cordoso et al 2011
+# Data received 7/2/26
+snp <- read.csv(here("Genomics/Data/PaigeAdapCapFishSNPGenotypes.raw.csv"))
+```
+
+## Merge Dataframes
+
+I need to merge these two data frames for Carlos. The only issue is Carlos says that 12 samples didn't run because they didn't pass quality check, but the same number of rows are present in each data frame. I'm not sure why that is- I will merge the data frames and ask Carlos.
+
+First, I need to extract the first 7 characters from the Sample_ID column in the *snp* data frame to match the *ctmax* data frame.
+
+```{r}
+# extract first 7 characters into column with the same name as the ctmax dataframe
+str(snp$Sample_ID)
+snp$NMFS_DNA_ID_use <- substr(snp$Sample_ID,1,7)
+
+# combine data frames by the NMFS_DNA_ID_use column
+colnames(ctmax)
+geno_pheno <- left_join(ctmax,snp, by ="NMFS_DNA_ID_use")
+
+write.csv(geno_pheno, "data/merged_PaigeAdapCapSNPs.csv", row.names = FALSE)
+```

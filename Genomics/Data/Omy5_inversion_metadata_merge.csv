@@ -1,0 +1,489 @@
+NMFS_DNA_ID_use,SAMPLE_ID,GENUS,SPECIES,LENGTH,WEIGHT,REPORTED_LIFE_STAGE,COLLECTION_DATE,NMFS_DNA_ID,STATE_F,COUNTY_F,WATERSHED,inversion_call,Water_Name,Site,Treatment,Treatment.Temp,Start.Temp_C,LOE.Temp_C
+M145489,BC-01,Oncorhynchus,mykiss,178,57.6,Juvenile,8/27/24,M145489,California,Monterey,Big Creek,AR,Big Creek,Big Sur,1,16.5,16.3,30.6
+M145490,BC-02,Oncorhynchus,mykiss,165,54.3,Juvenile,8/27/24,M145490,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.3,30.6
+M145491,BC-03,Oncorhynchus,mykiss,173,56.2,Juvenile,8/27/24,M145491,California,Monterey,Big Creek,AR,Big Creek,Big Sur,1,16.5,16.3,30.6
+M145492,BC-04,Oncorhynchus,mykiss,85,8.1,Juvenile,8/27/24,M145492,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.3,30.6
+M145493,BC-05,Oncorhynchus,mykiss,90,7.6,Juvenile,8/27/24,M145493,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.3,30.7
+M145494,BC-06,Oncorhynchus,mykiss,104,13.3,Juvenile,8/27/24,M145494,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.3,30.7
+M145495,BC-07,Oncorhynchus,mykiss,135,23.4,Juvenile,8/27/24,M145495,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.1,30.2
+M145496,BC-08,Oncorhynchus,mykiss,178,59.9,Juvenile,8/27/24,M145496,California,Monterey,Big Creek,AR,Big Creek,Big Sur,1,16.5,16.1,30.8
+M145497,BC-09,Oncorhynchus,mykiss,189,75.6,Juvenile,8/27/24,M145497,California,Monterey,Big Creek,AR,Big Creek,Big Sur,1,16.5,16.1,30.8
+M145498,BC-10,Oncorhynchus,mykiss,201,78.1,Juvenile,8/27/24,M145498,California,Monterey,Big Creek,AR,Big Creek,Big Sur,1,16.5,16.1,30.8
+M145499,BC-11,Oncorhynchus,mykiss,150,35.3,Juvenile,8/27/24,M145499,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.1,30.7
+M145500,BC-12,Oncorhynchus,mykiss,184,69.5,Juvenile,8/27/24,M145500,California,Monterey,Big Creek,AR,Big Creek,Big Sur,1,16.5,16.1,30.7
+M145501,BC-13,Oncorhynchus,mykiss,163,43.9,Juvenile,8/27/24,M145501,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.1,30.7
+M145502,BC-14,Oncorhynchus,mykiss,170,47.6,Juvenile,8/27/24,M145502,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.6,30.4
+M145503,BC-15,Oncorhynchus,mykiss,123,18.5,Juvenile,8/27/24,M145503,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.6,30.3
+M145504,BC-16,Oncorhynchus,mykiss,181,69.3,Juvenile,8/27/24,M145504,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.6,30.3
+M145505,BC-17,Oncorhynchus,mykiss,152,39.3,Juvenile,8/27/24,M145505,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.6,30.4
+M145506,BC-18,Oncorhynchus,mykiss,107,14.1,Juvenile,8/27/24,M145506,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.6,30.4
+M145507,BC-19,Oncorhynchus,mykiss,110,13.3,Juvenile,8/27/24,M145507,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.6,30.4
+M145508,BC-20,Oncorhynchus,mykiss,112,14.2,Juvenile,8/27/24,M145508,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,16.6,30.8
+M145509,BC-21,Oncorhynchus,mykiss,139,27.3,Juvenile,8/27/24,M145509,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,17,30.4
+M145510,BC-22,Oncorhynchus,mykiss,82,6.5,Juvenile,8/27/24,M145510,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,17,30.6
+M145511,BC-23,Oncorhynchus,mykiss,112,12.5,Juvenile,8/27/24,M145511,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,17,30.9
+M145512,BC-24,Oncorhynchus,mykiss,104,11.6,Juvenile,8/27/24,M145512,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,17,30.9
+M145513,BC-25,Oncorhynchus,mykiss,86,7.1,Juvenile,8/27/24,M145513,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,17,30.9
+M145514,BC-26,Oncorhynchus,mykiss,110,14.8,Juvenile,8/27/24,M145514,California,Monterey,Big Creek,AA,Big Creek,Big Sur,1,16.5,17,31
+M145515,BC-27,Oncorhynchus,mykiss,156,41.1,Juvenile,8/28/24,M145515,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145516,BC-28,Oncorhynchus,mykiss,162,51.3,Juvenile,8/28/24,M145516,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145517,BC-29,Oncorhynchus,mykiss,151,36.2,Juvenile,8/28/24,M145517,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145518,BC-30,Oncorhynchus,mykiss,183,63,Juvenile,8/28/24,M145518,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.6,31.3
+M145519,BC-31,Oncorhynchus,mykiss,103,12.7,Juvenile,8/28/24,M145519,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.6,31.4
+M145520,BC-32,Oncorhynchus,mykiss,111,15.2,Juvenile,8/28/24,M145520,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.6,31.7
+M145521,BC-33,Oncorhynchus,mykiss,106,12.3,Juvenile,8/28/24,M145521,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145522,BC-34,Oncorhynchus,mykiss,160,39.8,Juvenile,8/28/24,M145522,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145523,BC-35,Oncorhynchus,mykiss,155,38.6,Juvenile,8/28/24,M145523,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.6,31
+M145524,BC-36,Oncorhynchus,mykiss,104,12.7,Juvenile,8/28/24,M145524,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145525,BC-37,Oncorhynchus,mykiss,108,11.9,Juvenile,8/28/24,M145525,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145526,BC-38,Oncorhynchus,mykiss,113,16.9,Juvenile,8/28/24,M145526,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31
+M145527,BC-39,Oncorhynchus,mykiss,236,144.2,Juvenile,8/28/24,M145527,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.6,31.2
+M145528,BC-40,Oncorhynchus,mykiss,90,6.8,Juvenile,8/28/24,M145528,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.6,31.2
+M145529,BC-41,Oncorhynchus,mykiss,152,44.2,Juvenile,8/28/24,M145529,California,Monterey,Big Creek,RR,Big Creek,Big Sur,3,23,22.7,31
+M145530,BC-42,Oncorhynchus,mykiss,177,57.2,Juvenile,8/28/24,M145530,California,Monterey,Big Creek,RR,Big Creek,Big Sur,3,23,22.7,31.4
+M145531,BC-43,Oncorhynchus,mykiss,171,54.8,Juvenile,8/28/24,M145531,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.7,31.5
+M145532,BC-44,Oncorhynchus,mykiss,89,7.6,Juvenile,8/28/24,M145532,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.7,31.7
+M145533,BC-45,Oncorhynchus,mykiss,173,53.8,Juvenile,8/28/24,M145533,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.7,31.7
+M145534,BC-46,Oncorhynchus,mykiss,90,7.9,Juvenile,8/28/24,M145534,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.7,31.7
+M145535,BC-47,Oncorhynchus,mykiss,105,11.4,Juvenile,8/28/24,M145535,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.7,31.9
+M145536,BC-48,Oncorhynchus,mykiss,201,95.3,Juvenile,8/28/24,M145536,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.8,31.1
+M145537,BC-49,Oncorhynchus,mykiss,79,5.8,Juvenile,8/28/24,M145537,California,Monterey,Big Creek,AR,Big Creek,Big Sur,3,23,22.8,31.2
+M145538,BC-50,Oncorhynchus,mykiss,119,16.5,Juvenile,8/28/24,M145538,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.8,31.6
+M145539,BC-51,Oncorhynchus,mykiss,132,23.9,Juvenile,8/28/24,M145539,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.8,31.5
+M145540,BC-52,Oncorhynchus,mykiss,110,13.9,Juvenile,8/28/24,M145540,California,Monterey,Big Creek,AA,Big Creek,Big Sur,3,23,22.8,31.5
+M145541,BC-53,Oncorhynchus,mykiss,165,46.5,Juvenile,8/29/24,M145541,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.3,30.7
+M145542,BC-54,Oncorhynchus,mykiss,159,43.4,Juvenile,8/29/24,M145542,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.3,30.7
+M145543,BC-55,Oncorhynchus,mykiss,105,11.7,Juvenile,8/29/24,M145543,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.3,31
+M145544,BC-56,Oncorhynchus,mykiss,121,18.1,Juvenile,8/29/24,M145544,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.3,30.8
+M145545,BC-57,Oncorhynchus,mykiss,96,9.8,Juvenile,8/29/24,M145545,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.3,30.9
+M145546,BC-58,Oncorhynchus,mykiss,89,5.5,Juvenile,8/29/24,M145546,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.3,30.9
+M145547,BC-59,Oncorhynchus,mykiss,112,16.5,Juvenile,8/29/24,M145547,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.3,31.1
+M145548,BC-60,Oncorhynchus,mykiss,209,96.4,Juvenile,8/29/24,M145548,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,30.5
+M145549,BC-61,Oncorhynchus,mykiss,112,13.7,Juvenile,8/29/24,M145549,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,30.6
+M145550,BC-62,Oncorhynchus,mykiss,109,13,Juvenile,8/29/24,M145550,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,30.9
+M145551,BC-63,Oncorhynchus,mykiss,118,16.7,Juvenile,8/29/24,M145551,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,31.1
+M145552,BC-64,Oncorhynchus,mykiss,125,21.1,Juvenile,8/29/24,M145552,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,31.1
+M145553,BC-65,Oncorhynchus,mykiss,107,14,Juvenile,8/29/24,M145553,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,31.2
+M145554,BC-66,Oncorhynchus,mykiss,115,17.2,Juvenile,8/29/24,M145554,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,31.2
+M145555,BC-67,Oncorhynchus,mykiss,159,38.6,Juvenile,8/29/24,M145555,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,30.4
+M145556,BC-68,Oncorhynchus,mykiss,155,32.8,Juvenile,8/29/24,M145556,California,Monterey,Big Creek,RR,Big Creek,Big Sur,2,20,20.4,30.7
+M145557,BC-69,Oncorhynchus,mykiss,124,20.1,Juvenile,8/29/24,M145557,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,30.7
+M145558,BC-70,Oncorhynchus,mykiss,150,33.3,Juvenile,8/29/24,M145558,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,30.7
+M145559,BC-71,Oncorhynchus,mykiss,93,10.3,Juvenile,8/29/24,M145559,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,31.2
+M145560,BC-72,Oncorhynchus,mykiss,114,15.4,Juvenile,8/29/24,M145560,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,31.3
+M145561,BC-73,Oncorhynchus,mykiss,91,9.3,Juvenile,8/29/24,M145561,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,31.3
+M145562,BC-74,Oncorhynchus,mykiss,89,7.9,Juvenile,8/29/24,M145562,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.2,30.3
+M145563,BC-75,Oncorhynchus,mykiss,96,9.1,Juvenile,8/29/24,M145563,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.2,30.4
+M145564,BC-76,Oncorhynchus,mykiss,90,7.8,Juvenile,8/29/24,M145564,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.2,31
+M145565,BC-77,Oncorhynchus,mykiss,127,20.1,Juvenile,8/29/24,M145565,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.2,31.3
+M145566,BC-78,Oncorhynchus,mykiss,108,13.6,Juvenile,8/29/24,M145566,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.2,31.4
+M145567,BC-79,Oncorhynchus,mykiss,83,7.7,Juvenile,8/29/24,M145567,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.2,31.4
+M145568,BC-80,Oncorhynchus,mykiss,159,38.7,Juvenile,8/30/24,M145568,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,24.6,30.8
+M145569,BC-81,Oncorhynchus,mykiss,184,66.6,Juvenile,8/30/24,M145569,California,Monterey,Big Creek,RR,Big Creek,Big Sur,4,25,24.6,31.2
+M145570,BC-82,Oncorhynchus,mykiss,112,14.9,Juvenile,8/30/24,M145570,California,Monterey,Big Creek,AR,Big Creek,Big Sur,4,25,24.6,31.2
+M145571,BC-83,Oncorhynchus,mykiss,102,11.6,Juvenile,8/30/24,M145571,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,24.6,31.2
+M145572,BC-84,Oncorhynchus,mykiss,121,18.3,Juvenile,8/30/24,M145572,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,24.6,31.5
+M145573,BC-85,Oncorhynchus,mykiss,75,4.5,Juvenile,8/30/24,M145573,California,Monterey,Big Creek,RR,Big Creek,Big Sur,4,25,24.6,31.7
+M145574,BC-86,Oncorhynchus,mykiss,113,14.7,Juvenile,8/30/24,M145574,California,Monterey,Big Creek,AR,Big Creek,Big Sur,4,25,24.6,31.7
+M145575,BC-87,Oncorhynchus,mykiss,99,11,Juvenile,8/30/24,M145575,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,24.6,31.7
+M145576,BC-88,Oncorhynchus,mykiss,75,5.6,Juvenile,8/30/24,M145576,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,24.6,31.7
+M145577,BC-89,Oncorhynchus,mykiss,NA,2.4,Juvenile,8/30/24,M145577,California,Monterey,Big Creek,NA,Big Creek,Big Sur,4,25,25.2,30.7
+M145578,BC-90,Oncorhynchus,mykiss,112,15.1,Juvenile,8/30/24,M145578,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25.2,31.2
+M145579,BC-91,Oncorhynchus,mykiss,102,10.4,Juvenile,8/30/24,M145579,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25.2,31.2
+M145580,BC-92,Oncorhynchus,mykiss,106,12,Juvenile,8/30/24,M145580,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25.2,31.3
+M145581,BC-93,Oncorhynchus,mykiss,104,12.1,Juvenile,8/30/24,M145581,California,Monterey,Big Creek,AR,Big Creek,Big Sur,4,25,25.2,31.4
+M145582,BC-94,Oncorhynchus,mykiss,114,15.2,Juvenile,8/30/24,M145582,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25.2,31.5
+M145583,BC-95,Oncorhynchus,mykiss,93,8.9,Juvenile,8/30/24,M145583,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25.2,31.5
+M145584,BC-96,Oncorhynchus,mykiss,109,12.9,Juvenile,8/30/24,M145584,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25.2,31.6
+M145585,BC-97,Oncorhynchus,mykiss,100,10.4,Juvenile,8/30/24,M145585,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25.2,31.7
+M145586,BC-98,Oncorhynchus,mykiss,110,14.6,Juvenile,8/30/24,M145586,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25,31.5
+M145587,BC-99,Oncorhynchus,mykiss,106,11.7,Juvenile,8/30/24,M145587,California,Monterey,Big Creek,AR,Big Creek,Big Sur,4,25,25,31.5
+M145588,BC-100,Oncorhynchus,mykiss,90,8,Juvenile,8/30/24,M145588,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25,31.6
+M145589,BC-101,Oncorhynchus,mykiss,85,7.4,Juvenile,8/30/24,M145589,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25,31.7
+M145590,BC-102,Oncorhynchus,mykiss,109,13.7,Juvenile,8/30/24,M145590,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25,31.8
+M145591,BC-103,Oncorhynchus,mykiss,97,9.7,Juvenile,8/30/24,M145591,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25,31.9
+M145592,BC-104,Oncorhynchus,mykiss,89,7.3,Juvenile,8/30/24,M145592,California,Monterey,Big Creek,AA,Big Creek,Big Sur,4,25,25,31.9
+M145593,CR-01,Oncorhynchus,mykiss,190,59.5,Juvenile,10/23/24,M145593,California,Monterey,Carmel River,AR,Carmel River,Carmel River,3,23,22.1,30.5
+M145594,CR-02,Oncorhynchus,mykiss,58,2,Juvenile,10/23/24,M145594,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.1,31
+M145595,CR-03,Oncorhynchus,mykiss,79,7.3,Juvenile,10/23/24,M145595,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.1,31.3
+M145596,CR-04,Oncorhynchus,mykiss,85,8.3,Juvenile,10/23/24,M145596,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.1,31.3
+M145597,CR-05,Oncorhynchus,mykiss,100,10.4,Juvenile,10/23/24,M145597,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.1,31.3
+M145598,CR-06,Oncorhynchus,mykiss,175,55.4,Juvenile,10/23/24,M145598,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.1,31.3
+M145599,CR-07,Oncorhynchus,mykiss,128,22,Juvenile,10/23/24,M145599,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.1,31.4
+M145600,CR-08,Oncorhynchus,mykiss,81,6.7,Juvenile,10/23/24,M145600,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.1,31.6
+M145601,CR-09,Oncorhynchus,mykiss,209,89.8,Juvenile,10/23/24,M145601,California,Monterey,Carmel River,NA,Carmel River,Carmel River,3,23,22.6,30.4
+M145602,CR-10,Oncorhynchus,mykiss,93,8.8,Juvenile,10/23/24,M145602,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.6,30.9
+M145603,CR-11,Oncorhynchus,mykiss,91,8,Juvenile,10/23/24,M145603,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.6,30.9
+M145604,CR-12,Oncorhynchus,mykiss,162,39,Juvenile,10/23/24,M145604,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.6,30.9
+M145605,CR-13,Oncorhynchus,mykiss,85,6.9,Juvenile,10/23/24,M145605,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.6,31
+M145606,CR-14,Oncorhynchus,mykiss,126,20.4,Juvenile,10/23/24,M145606,California,Monterey,Carmel River,AR,Carmel River,Carmel River,3,23,22.6,31.3
+M145607,CR-15,Oncorhynchus,mykiss,75,4.7,Juvenile,10/23/24,M145607,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.6,31.3
+M145608,CR-16,Oncorhynchus,mykiss,83,5.8,Juvenile,10/23/24,M145608,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22.6,31.4
+M145609,CR-17,Oncorhynchus,mykiss,72,3.5,Juvenile,10/23/24,M145609,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.2
+M145610,CR-18,Oncorhynchus,mykiss,87,7,Juvenile,10/23/24,M145610,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.3
+M145611,CR-19,Oncorhynchus,mykiss,62,2.4,Juvenile,10/23/24,M145611,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.5
+M145612,CR-20,Oncorhynchus,mykiss,77,4.7,Juvenile,10/23/24,M145612,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.5
+M145613,CR-21,Oncorhynchus,mykiss,66,3.1,Juvenile,10/23/24,M145613,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.7
+M145614,CR-22,Oncorhynchus,mykiss,77,4.6,Juvenile,10/23/24,M145614,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.7
+M145615,CR-23,Oncorhynchus,mykiss,77,NA,Juvenile,10/23/24,M145615,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.7
+M145616,CR-24,Oncorhynchus,mykiss,94,8.3,Juvenile,10/23/24,M145616,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,31.9
+M145617,CR-25,Oncorhynchus,mykiss,90,8.3,Juvenile,10/23/24,M145617,California,Monterey,Carmel River,AA,Carmel River,Carmel River,3,23,22,32.1
+M145618,CR-26,Oncorhynchus,mykiss,59,1.5,Juvenile,10/24/24,M145618,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,30.6
+M145619,CR-27,Oncorhynchus,mykiss,87,7.6,Juvenile,10/24/24,M145619,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,30.5
+M145620,CR-28,Oncorhynchus,mykiss,99,10.6,Juvenile,10/24/24,M145620,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,30.5
+M145621,CR-29,Oncorhynchus,mykiss,86,6.8,Juvenile,10/24/24,M145621,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,30.7
+M145622,CR-30,Oncorhynchus,mykiss,86,7.9,Juvenile,10/24/24,M145622,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,30.7
+M145623,CR-31,Oncorhynchus,mykiss,93,7.6,Juvenile,10/24/24,M145623,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,30.7
+M145624,CR-32,Oncorhynchus,mykiss,85,6.4,Juvenile,10/24/24,M145624,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,31
+M145625,CR-33,Oncorhynchus,mykiss,99,11.6,Juvenile,10/24/24,M145625,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,12.9,31.1
+M145626,CR-34,Oncorhynchus,mykiss,100,10.2,Juvenile,10/24/24,M145626,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.2
+M145627,CR-35,Oncorhynchus,mykiss,93,9.2,Juvenile,10/24/24,M145627,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.8
+M145628,CR-36,Oncorhynchus,mykiss,76,4,Juvenile,10/24/24,M145628,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.8
+M145629,CR-37,Oncorhynchus,mykiss,80,5.4,Juvenile,10/24/24,M145629,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.8
+M145630,CR-38,Oncorhynchus,mykiss,73,4.1,Juvenile,10/24/24,M145630,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.8
+M145631,CR-39,Oncorhynchus,mykiss,129,22.8,Juvenile,10/24/24,M145631,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.8
+M145632,CR-40,Oncorhynchus,mykiss,93,8.8,Juvenile,10/24/24,M145632,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.8
+M145633,CR-41,Oncorhynchus,mykiss,156,38.5,Juvenile,10/24/24,M145633,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,13.9,30.8
+M145634,CR-42,Oncorhynchus,mykiss,93,9.8,Juvenile,10/24/24,M145634,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.6
+M145635,CR-43,Oncorhynchus,mykiss,83,6,Juvenile,10/24/24,M145635,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.6
+M145636,CR-44,Oncorhynchus,mykiss,127,20.8,Juvenile,10/24/24,M145636,California,Monterey,Carmel River,AR,Carmel River,Carmel River,1,13,14.9,30.7
+M145637,CR-45,Oncorhynchus,mykiss,81,6.1,Juvenile,10/24/24,M145637,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.6
+M145638,CR-46,Oncorhynchus,mykiss,83,5.9,Juvenile,10/24/24,M145638,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.6
+M145639,CR-47,Oncorhynchus,mykiss,83,6,Juvenile,10/24/24,M145639,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.6
+M145640,CR-48,Oncorhynchus,mykiss,77,5.5,Juvenile,10/24/24,M145640,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.6
+M145641,CR-49,Oncorhynchus,mykiss,110,13.5,Juvenile,10/24/24,M145641,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.7
+M145642,CR-50,Oncorhynchus,mykiss,93,9.7,Juvenile,10/24/24,M145642,California,Monterey,Carmel River,AA,Carmel River,Carmel River,1,13,14.9,30.7
+M145643,CR-51,Oncorhynchus,mykiss,176,50,Juvenile,10/29/24,M145643,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,31
+M145644,CR-52,Oncorhynchus,mykiss,79,3.9,Juvenile,10/29/24,M145644,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,31.6
+M145645,CR-53,Oncorhynchus,mykiss,85,8.2,Juvenile,10/29/24,M145645,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,31.6
+M145646,CR-54,Oncorhynchus,mykiss,119,17.8,Juvenile,10/29/24,M145646,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,31.6
+M145647,CR-55,Oncorhynchus,mykiss,72,4.3,Juvenile,10/29/24,M145647,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,31.6
+M145648,CR-56,Oncorhynchus,mykiss,90,6.3,Juvenile,10/29/24,M145648,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,31.7
+M145649,CR-57,Oncorhynchus,mykiss,94,8.2,Juvenile,10/29/24,M145649,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,31.7
+M145650,CR-58,Oncorhynchus,mykiss,75,5,Juvenile,10/29/24,M145650,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24.1,32
+M145651,CR-59,Oncorhynchus,mykiss,101,10.8,Juvenile,10/29/24,M145651,California,Monterey,Carmel River,AR,Carmel River,Carmel River,4,25,24,31.2
+M145652,CR-60,Oncorhynchus,mykiss,69,3.1,Juvenile,10/29/24,M145652,California,Monterey,Carmel River,AR,Carmel River,Carmel River,4,25,24,31.2
+M145653,CR-61,Oncorhynchus,mykiss,138,26.1,Juvenile,10/29/24,M145653,California,Monterey,Carmel River,AR,Carmel River,Carmel River,4,25,24,31.2
+M145654,CR-62,Oncorhynchus,mykiss,115,16.8,Juvenile,10/29/24,M145654,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.2
+M145655,CR-63,Oncorhynchus,mykiss,118,17.1,Juvenile,10/29/24,M145655,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.2
+M145656,CR-64,Oncorhynchus,mykiss,95,11.5,Juvenile,10/29/24,M145656,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,32
+M145657,CR-65,Oncorhynchus,mykiss,91,7.5,Juvenile,10/29/24,M145657,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,32
+M145658,CR-66,Oncorhynchus,mykiss,95,8.9,Juvenile,10/29/24,M145658,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,32
+M145659,CR-67,Oncorhynchus,mykiss,162,44.4,Juvenile,10/29/24,M145659,California,Monterey,Carmel River,AR,Carmel River,Carmel River,4,25,24,31.2
+M145660,CR-68,Oncorhynchus,mykiss,104,11.3,Juvenile,10/29/24,M145660,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.2
+M145661,CR-69,Oncorhynchus,mykiss,103,11.4,Juvenile,10/29/24,M145661,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.3
+M145662,CR-70,Oncorhynchus,mykiss,63,2.4,Juvenile,10/29/24,M145662,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.6
+M145663,CR-71,Oncorhynchus,mykiss,71,3.4,Juvenile,10/29/24,M145663,California,Monterey,Carmel River,AR,Carmel River,Carmel River,4,25,24,31.6
+M145664,CR-72,Oncorhynchus,mykiss,70,4,Juvenile,10/29/24,M145664,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.6
+M145665,CR-73,Oncorhynchus,mykiss,81,5.5,Juvenile,10/29/24,M145665,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.6
+M145666,CR-74,Oncorhynchus,mykiss,78,6.2,Juvenile,10/29/24,M145666,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.6
+M145667,CR-75,Oncorhynchus,mykiss,91,7.5,Juvenile,10/29/24,M145667,California,Monterey,Carmel River,AA,Carmel River,Carmel River,4,25,24,31.6
+M145668,CR-76,Oncorhynchus,mykiss,76,6.2,Juvenile,10/30/24,M145668,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,30.8
+M145669,CR-77,Oncorhynchus,mykiss,81,6.8,Juvenile,10/30/24,M145669,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,30.8
+M145670,CR-78,Oncorhynchus,mykiss,81,7,Juvenile,10/30/24,M145670,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,30.8
+M145671,CR-79,Oncorhynchus,mykiss,89,10.5,Juvenile,10/30/24,M145671,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,30.8
+M145672,CR-80,Oncorhynchus,mykiss,93,8.9,Juvenile,10/30/24,M145672,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,30.8
+M145673,CR-81,Oncorhynchus,mykiss,74,4.7,Juvenile,10/30/24,M145673,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,30.8
+M145674,CR-82,Oncorhynchus,mykiss,70,4.1,Juvenile,10/30/24,M145674,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,30.8
+M145675,CR-83,Oncorhynchus,mykiss,106,11.4,Juvenile,10/30/24,M145675,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.2,31
+M145676,CR-84,Oncorhynchus,mykiss,148,31.6,Juvenile,10/30/24,M145676,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.5,30.6
+M145677,CR-85,Oncorhynchus,mykiss,147,27,Juvenile,10/30/24,M145677,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.5,30.6
+M145678,CR-86,Oncorhynchus,mykiss,71,4.8,Juvenile,10/30/24,M145678,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.5,30.8
+M145679,CR-87,Oncorhynchus,mykiss,86,7.1,Juvenile,10/30/24,M145679,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.5,30.8
+M145680,CR-88,Oncorhynchus,mykiss,93,8.9,Juvenile,10/30/24,M145680,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.5,30.9
+M145681,CR-89,Oncorhynchus,mykiss,83,6,Juvenile,10/30/24,M145681,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.5,30.8
+M145682,CR-90,Oncorhynchus,mykiss,81,5.6,Juvenile,10/30/24,M145682,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.5,30.9
+M145683,CR-91,Oncorhynchus,mykiss,140,25.8,Juvenile,10/30/24,M145683,California,Monterey,Carmel River,AR,Carmel River,Carmel River,2,20,19.5,30.9
+M145684,CR-92,Oncorhynchus,mykiss,112,14.3,Juvenile,10/30/24,M145684,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,30.3
+M145685,CR-93,Oncorhynchus,mykiss,69,3.1,Juvenile,10/30/24,M145685,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,30.8
+M145686,CR-94,Oncorhynchus,mykiss,130,24.4,Juvenile,10/30/24,M145686,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,31.4
+M145687,CR-95,Oncorhynchus,mykiss,71,4,Juvenile,10/30/24,M145687,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,31.3
+M145688,CR-96,Oncorhynchus,mykiss,83,6.8,Juvenile,10/30/24,M145688,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,31.4
+M145689,CR-97,Oncorhynchus,mykiss,98,8.1,Juvenile,10/30/24,M145689,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,31.4
+M145690,CR-98,Oncorhynchus,mykiss,93,8.1,Juvenile,10/30/24,M145690,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,31.3
+M145691,CR-99,Oncorhynchus,mykiss,121,18.2,Juvenile,10/30/24,M145691,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,31.3
+M145692,CR-100,Oncorhynchus,mykiss,80,6.3,Juvenile,10/30/24,M145692,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.7,31.4
+M145693,SC-01,Oncorhynchus,mykiss,213,94,Juvenile,9/4/24,M145693,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,16.3,30
+M145694,SC-02,Oncorhynchus,mykiss,120,15.5,Juvenile,9/4/24,M145694,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,16.3,30.4
+M145695,SC-03,Oncorhynchus,mykiss,79,5.2,Juvenile,9/4/24,M145695,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,16.3,30.5
+M145696,SC-04,Oncorhynchus,mykiss,120,19,Juvenile,9/4/24,M145696,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,16.3,30.5
+M145697,SC-05,Oncorhynchus,mykiss,125,20.3,Juvenile,9/4/24,M145697,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,16.3,30.7
+M145698,SC-06,Oncorhynchus,mykiss,69,2.7,Juvenile,9/4/24,M145698,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,16.3,30.9
+M145699,SC-07,Oncorhynchus,mykiss,72,3.8,Juvenile,9/4/24,M145699,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,16.3,31
+M145700,SC-08,Oncorhynchus,mykiss,101,11.7,Juvenile,9/4/24,M145700,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,16.3,31.1
+M145701,SC-09,Oncorhynchus,mykiss,76,4.8,Juvenile,9/4/24,M145701,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,19.3,30.6
+M145702,SC-10,Oncorhynchus,mykiss,74,4,Juvenile,9/4/24,M145702,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,19.3,30.6
+M145703,SC-11,Oncorhynchus,mykiss,93,8.1,Juvenile,9/4/24,M145703,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.3,30.7
+M145704,SC-12,Oncorhynchus,mykiss,140,25.1,Juvenile,9/4/24,M145704,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.3,30.8
+M145705,SC-13,Oncorhynchus,mykiss,96,9.2,Juvenile,9/4/24,M145705,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,19.3,30.9
+M145706,SC-14,Oncorhynchus,mykiss,93,8.1,Juvenile,9/4/24,M145706,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,19.3,30.9
+M145707,SC-15,Oncorhynchus,mykiss,80,4.6,Juvenile,9/4/24,M145707,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.3,30.9
+M145708,SC-16,Oncorhynchus,mykiss,70,3.8,Juvenile,9/4/24,M145708,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.3,30.9
+M145709,SC-17,Oncorhynchus,mykiss,132,20.7,Juvenile,9/4/24,M145709,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,19.2,30.3
+M145710,SC-18,Oncorhynchus,mykiss,73,4.2,Juvenile,9/4/24,M145710,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.2,30.7
+M145711,SC-19,Oncorhynchus,mykiss,129,22.5,Juvenile,9/4/24,M145711,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,19.2,30.7
+M145712,SC-20,Oncorhynchus,mykiss,93,8.3,Juvenile,9/4/24,M145712,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.2,30.8
+M145713,SC-21,Oncorhynchus,mykiss,90,7.3,Juvenile,9/4/24,M145713,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.2,30.8
+M145714,SC-22,Oncorhynchus,mykiss,84,5.8,Juvenile,9/4/24,M145714,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.2,31
+M145715,SC-23,Oncorhynchus,mykiss,86,6.1,Juvenile,9/4/24,M145715,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.2,31.1
+M145716,SC-24,Oncorhynchus,mykiss,115,17.9,Juvenile,9/4/24,M145716,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,1,18.3,19.2,31
+M145717,SC-25,Oncorhynchus,mykiss,79,5,Juvenile,9/4/24,M145717,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,1,18.3,19.2,31.1
+M145718,SC-26,Oncorhynchus,mykiss,105,12.4,Juvenile,9/5/24,M145718,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.5,30.9
+M145719,SC-27,Oncorhynchus,mykiss,94,7.4,Juvenile,9/5/24,M145719,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.1
+M145720,SC-28,Oncorhynchus,mykiss,73,3.5,Juvenile,9/5/24,M145720,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31
+M145721,SC-29,Oncorhynchus,mykiss,91,8,Juvenile,9/5/24,M145721,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.1
+M145722,SC-30,Oncorhynchus,mykiss,75,3.7,Juvenile,9/5/24,M145722,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.2
+M145723,SC-31,Oncorhynchus,mykiss,97,10,Juvenile,9/5/24,M145723,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.3
+M145724,SC-32,Oncorhynchus,mykiss,89,7,Juvenile,9/5/24,M145724,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.3
+M145725,SC-33,Oncorhynchus,mykiss,86,5.6,Juvenile,9/5/24,M145725,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.3
+M145726,SC-34,Oncorhynchus,mykiss,98,10,Juvenile,9/5/24,M145726,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.4
+M145727,SC-35,Oncorhynchus,mykiss,191,70.9,Juvenile,9/5/24,M145727,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.7
+M145728,SC-36,Oncorhynchus,mykiss,99,9.5,Juvenile,9/5/24,M145728,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.5,30.9
+M145729,SC-37,Oncorhynchus,mykiss,74,4.5,Juvenile,9/5/24,M145729,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31
+M145730,SC-38,Oncorhynchus,mykiss,75,4.1,Juvenile,9/5/24,M145730,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31
+M145731,SC-39,Oncorhynchus,mykiss,81,5.8,Juvenile,9/5/24,M145731,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.5,31
+M145732,SC-40,Oncorhynchus,mykiss,86,6.3,Juvenile,9/5/24,M145732,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.28
+M145733,SC-41,Oncorhynchus,mykiss,95,8.8,Juvenile,9/5/24,M145733,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.1
+M145734,SC-42,Oncorhynchus,mykiss,85,6.9,Juvenile,9/5/24,M145734,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.1
+M145735,SC-43,Oncorhynchus,mykiss,143,28,Juvenile,9/5/24,M145735,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.1
+M145736,SC-44,Oncorhynchus,mykiss,80,7.5,Juvenile,9/5/24,M145736,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.5,31.2
+M145737,SC-45,Oncorhynchus,mykiss,76,4.6,Juvenile,9/5/24,M145737,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.5,31.1
+M145738,SC-46,Oncorhynchus,mykiss,99,10.1,Juvenile,9/5/24,M145738,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.5,31.1
+M145739,SC-47,Oncorhynchus,mykiss,89,9,Juvenile,9/6/24,M145739,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.2
+M145740,SC-48,Oncorhynchus,mykiss,83,6.3,Juvenile,9/6/24,M145740,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.4
+M145741,SC-49,Oncorhynchus,mykiss,88,6.9,Juvenile,9/6/24,M145741,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.4
+M145742,SC-50,Oncorhynchus,mykiss,80,5.5,Juvenile,9/6/24,M145742,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.4
+M145743,SC-51,Oncorhynchus,mykiss,95,8.5,Juvenile,9/6/24,M145743,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.4
+M145744,SC-52,Oncorhynchus,mykiss,91,9.1,Juvenile,9/6/24,M145744,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.6
+M145745,SC-53,Oncorhynchus,mykiss,74,4.5,Juvenile,9/6/24,M145745,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.6
+M145746,SC-54,Oncorhynchus,mykiss,90,5.6,Juvenile,9/6/24,M145746,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.6
+M145747,SC-55,Oncorhynchus,mykiss,129,21.5,Juvenile,9/6/24,M145747,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,30.8
+M145748,SC-56,Oncorhynchus,mykiss,85,7,Juvenile,9/6/24,M145748,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.3
+M145749,SC-57,Oncorhynchus,mykiss,81,5,Juvenile,9/6/24,M145749,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.4
+M145750,SC-58,Oncorhynchus,mykiss,84,NA,Juvenile,9/6/24,M145750,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.4
+M145751,SC-59,Oncorhynchus,mykiss,73,4.5,Juvenile,9/6/24,M145751,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.5
+M145752,SC-60,Oncorhynchus,mykiss,82,5.8,Juvenile,9/6/24,M145752,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.5
+M145753,SC-61,Oncorhynchus,mykiss,68,3.5,Juvenile,9/6/24,M145753,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.4
+M145754,SC-62,Oncorhynchus,mykiss,87,6.8,Juvenile,9/6/24,M145754,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.6
+M145755,SC-63,Oncorhynchus,mykiss,64,2.4,Juvenile,9/6/24,M145755,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.4
+M145756,SC-64,Oncorhynchus,mykiss,77,4.4,Juvenile,9/6/24,M145756,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.6
+M145757,SC-65,Oncorhynchus,mykiss,66,2.4,Juvenile,9/6/24,M145757,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.6
+M145758,SC-66,Oncorhynchus,mykiss,75,4.8,Juvenile,9/6/24,M145758,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.6
+M145759,SC-67,Oncorhynchus,mykiss,79,4.3,Juvenile,9/6/24,M145759,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.6
+M145760,SC-68,Oncorhynchus,mykiss,76,4.2,Juvenile,9/6/24,M145760,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.7
+M145761,SC-69,Oncorhynchus,mykiss,130,21.6,Juvenile,9/6/24,M145761,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.7
+M145762,SC-70,Oncorhynchus,mykiss,76,4.3,Juvenile,9/6/24,M145762,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,3,23,22.9,31.7
+M145763,SC-71,Oncorhynchus,mykiss,87,7.2,Juvenile,9/6/24,M145763,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.7
+M145764,SC-72,Oncorhynchus,mykiss,89,7.7,Juvenile,9/6/24,M145764,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,3,23,22.9,31.7
+M145765,SC-73,Oncorhynchus,mykiss,130,22,Juvenile,9/10/24,M145765,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.6,30.8
+M145766,SC-74,Oncorhynchus,mykiss,103,11.7,Juvenile,9/10/24,M145766,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.6,31.3
+M145767,SC-75,Oncorhynchus,mykiss,63,2.4,Juvenile,9/10/24,M145767,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.6,31.4
+M145768,SC-76,Oncorhynchus,mykiss,96,10.4,Juvenile,9/10/24,M145768,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.6,31.5
+M145769,SC-77,Oncorhynchus,mykiss,148,34.5,Juvenile,9/10/24,M145769,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.6,31.6
+M145770,SC-78,Oncorhynchus,mykiss,68,3.1,Juvenile,9/10/24,M145770,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.6,31.6
+M145771,SC-79,Oncorhynchus,mykiss,72,4.1,Juvenile,9/10/24,M145771,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.6,31.5
+M145772,SC-80,Oncorhynchus,mykiss,83,6.5,Juvenile,9/10/24,M145772,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.6,31.5
+M145773,SC-81,Oncorhynchus,mykiss,138,28.9,Juvenile,9/10/24,M145773,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.3
+M145774,SC-82,Oncorhynchus,mykiss,79,4.7,Juvenile,9/10/24,M145774,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.5,31.4
+M145775,SC-83,Oncorhynchus,mykiss,136,25.2,Juvenile,9/10/24,M145775,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.4
+M145776,SC-84,Oncorhynchus,mykiss,81,1.3,Juvenile,9/10/24,M145776,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.4
+M145777,SC-85,Oncorhynchus,mykiss,73,4.6,Juvenile,9/10/24,M145777,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.7
+M145778,SC-86,Oncorhynchus,mykiss,80,5.9,Juvenile,9/10/24,M145778,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.5,31.7
+M145779,SC-87,Oncorhynchus,mykiss,70,3.6,Juvenile,9/10/24,M145779,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.7
+M145780,SC-88,Oncorhynchus,mykiss,87,7.2,Juvenile,9/10/24,M145780,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.5,31.8
+M145781,SC-89,Oncorhynchus,mykiss,70,3.6,Juvenile,9/10/24,M145781,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.5,31.3
+M145782,SC-90,Oncorhynchus,mykiss,79,5.5,Juvenile,9/10/24,M145782,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.4
+M145783,SC-91,Oncorhynchus,mykiss,78,5.6,Juvenile,9/10/24,M145783,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.5,31.5
+M145784,SC-92,Oncorhynchus,mykiss,179,60.8,Juvenile,9/10/24,M145784,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.5,31.4
+M145785,SC-93,Oncorhynchus,mykiss,76,4.6,Juvenile,9/10/24,M145785,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.8
+M145786,SC-95,Oncorhynchus,mykiss,81,6.2,Juvenile,9/10/24,M145786,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,4,25,24.5,31.8
+M145787,SC-96,Oncorhynchus,mykiss,86,6.4,Juvenile,9/10/24,M145787,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,4,25,24.5,31.8
+M145788,DC-01,Oncorhynchus,mykiss,71,3.5,Juvenile,7/23/25,M145788,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.8,31.2
+M145789,DC-02,Oncorhynchus,mykiss,76,5,Juvenile,7/23/25,M145789,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.8,31.9
+M145790,DC-03,Oncorhynchus,mykiss,85,6.1,Juvenile,7/23/25,M145790,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.8,31.9
+M145791,DC-04,Oncorhynchus,mykiss,69,3.5,Juvenile,7/23/25,M145791,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.8,32
+M145792,DC-05,Oncorhynchus,mykiss,79,5.3,Juvenile,7/23/25,M145792,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.8,32
+M145793,DC-06,Oncorhynchus,mykiss,66,3.2,Juvenile,7/23/25,M145793,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.8,32
+M145794,DC-07,Oncorhynchus,mykiss,75,4.4,Juvenile,7/23/25,M145794,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.8,32
+M145795,DC-08,Oncorhynchus,mykiss,81,5.5,Juvenile,7/23/25,M145795,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.8,32
+M145796,DC-09,Oncorhynchus,mykiss,85,7,Juvenile,7/23/25,M145796,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.9,31.7
+M145797,DC-10,Oncorhynchus,mykiss,80,5.7,Juvenile,7/23/25,M145797,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.9,31.7
+M145798,DC-11,Oncorhynchus,mykiss,90,7.4,Juvenile,7/23/25,M145798,California,Napa,Napa River,RR,Dry Creek,Napa,4,25,24.9,31.8
+M145799,DC-12,Oncorhynchus,mykiss,86,6.8,Juvenile,7/23/25,M145799,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.9,31.9
+M145800,DC-13,Oncorhynchus,mykiss,99,9.2,Juvenile,7/23/25,M145800,California,Napa,Napa River,RR,Dry Creek,Napa,4,25,24.9,31.9
+M145801,DC-14,Oncorhynchus,mykiss,75,4.3,Juvenile,7/23/25,M145801,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.9,31.9
+M145802,DC-15,Oncorhynchus,mykiss,83,5,Juvenile,7/23/25,M145802,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.9,31.9
+M145803,DC-16,Oncorhynchus,mykiss,81,5.9,Juvenile,7/23/25,M145803,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.9,31.9
+M145804,DC-17,Oncorhynchus,mykiss,86,6.6,Juvenile,7/23/25,M145804,California,Napa,Napa River,RR,Dry Creek,Napa,4,25,24.6,31.6
+M145805,DC-18,Oncorhynchus,mykiss,83,6.4,Juvenile,7/23/25,M145805,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.6,31.6
+M145806,DC-19,Oncorhynchus,mykiss,80,4.5,Juvenile,7/23/25,M145806,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.6,31.6
+M145807,DC-20,Oncorhynchus,mykiss,88,6.7,Juvenile,7/23/25,M145807,California,Napa,Napa River,AR,Dry Creek,Napa,4,25,24.6,31.7
+M145808,DC-21,Oncorhynchus,mykiss,79,5,Juvenile,7/23/25,M145808,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.6,31.7
+M145809,DC-22,Oncorhynchus,mykiss,87,5.8,Juvenile,7/23/25,M145809,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.6,31.7
+M145810,DC-23,Oncorhynchus,mykiss,81,5.2,Juvenile,7/23/25,M145810,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.6,31.7
+M145811,DC-24,Oncorhynchus,mykiss,86,7.1,Juvenile,7/23/25,M145811,California,Napa,Napa River,AA,Dry Creek,Napa,4,25,24.6,31.9
+M145812,DC-25,Oncorhynchus,mykiss,80,5.2,Juvenile,7/23/25,M145812,California,Napa,Napa River,RR,Dry Creek,Napa,4,25,24.6,31.9
+M145813,DC-26,Oncorhynchus,mykiss,75,4.3,Juvenile,7/24/25,M145813,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.6,31.2
+M145814,DC-27,Oncorhynchus,mykiss,80,5,Juvenile,7/24/25,M145814,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.6,31.2
+M145815,DC-28,Oncorhynchus,mykiss,80,5.3,Juvenile,7/24/25,M145815,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.6,31.2
+M145816,DC-29,Oncorhynchus,mykiss,79,5.1,Juvenile,7/24/25,M145816,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.6,31.3
+M145817,DC-30,Oncorhynchus,mykiss,78,4.6,Juvenile,7/24/25,M145817,California,Napa,Napa River,AR,Dry Creek,Napa,2,20,20.6,31.3
+M145818,DC-31,Oncorhynchus,mykiss,67,2.8,Juvenile,7/24/25,M145818,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.6,31.3
+M145819,DC-32,Oncorhynchus,mykiss,82,6,Juvenile,7/24/25,M145819,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.6,31.3
+M145820,DC-33,Oncorhynchus,mykiss,77,4.6,Juvenile,7/24/25,M145820,California,Napa,Napa River,AR,Dry Creek,Napa,2,20,20.6,31.5
+M145821,DC-34,Oncorhynchus,mykiss,86,6.2,Juvenile,7/24/25,M145821,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.4,31.2
+M145822,DC-35,Oncorhynchus,mykiss,80,5.2,Juvenile,7/24/25,M145822,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.4,31.4
+M145823,DC-36,Oncorhynchus,mykiss,73,4.2,Juvenile,7/24/25,M145823,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.4,31.5
+M145824,DC-37,Oncorhynchus,mykiss,91,7.8,Juvenile,7/24/25,M145824,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.4,31.4
+M145825,DC-38,Oncorhynchus,mykiss,83,5.7,Juvenile,7/24/25,M145825,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.4,31.5
+M145826,DC-39,Oncorhynchus,mykiss,78,4.8,Juvenile,7/24/25,M145826,California,Napa,Napa River,RR,Dry Creek,Napa,2,20,20.4,31.5
+M145827,DC-40,Oncorhynchus,mykiss,84,6.3,Juvenile,7/24/25,M145827,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.4,31.5
+M145828,DC-41,Oncorhynchus,mykiss,85,6,Juvenile,7/24/25,M145828,California,Napa,Napa River,RR,Dry Creek,Napa,2,20,20.4,31.5
+M145829,DC-42,Oncorhynchus,mykiss,70,3.5,Juvenile,7/24/25,M145829,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.8,30.8
+M145830,DC-43,Oncorhynchus,mykiss,63,2.8,Juvenile,7/24/25,M145830,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.8,31.3
+M145831,DC-44,Oncorhynchus,mykiss,72,3.6,Juvenile,7/24/25,M145831,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.8,31.3
+M145832,DC-45,Oncorhynchus,mykiss,84,5.8,Juvenile,7/24/25,M145832,California,Napa,Napa River,AR,Dry Creek,Napa,2,20,20.8,31.2
+M145833,DC-46,Oncorhynchus,mykiss,78,5.4,Juvenile,7/24/25,M145833,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.8,31.2
+M145834,DC-47,Oncorhynchus,mykiss,85,6.6,Juvenile,7/24/25,M145834,California,Napa,Napa River,AR,Dry Creek,Napa,2,20,20.8,31.2
+M145835,DC-48,Oncorhynchus,mykiss,75,4.6,Juvenile,7/24/25,M145835,California,Napa,Napa River,AA,Dry Creek,Napa,2,20,20.8,31.2
+M145836,DC-49,Oncorhynchus,mykiss,70,3.7,Juvenile,7/24/25,M145836,California,Napa,Napa River,AR,Dry Creek,Napa,2,20,20.8,31.2
+M145837,DC-50,Oncorhynchus,mykiss,86,6.7,Juvenile,7/24/25,M145837,California,Napa,Napa River,AR,Dry Creek,Napa,2,20,20.8,31.3
+M145838,SC-01A,Oncorhynchus,mykiss,77,4.7,Juvenile,8/20/25,M145838,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,19.6,30.7
+M145839,SC-02A,Oncorhynchus,mykiss,177,29.5,Juvenile,8/20/25,M145839,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,19.6,31.1
+M145840,SC-03A,Oncorhynchus,mykiss,84,6.3,Juvenile,8/20/25,M145840,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,19.6,31.1
+M145841,SC-04A,Oncorhynchus,mykiss,92,8,Juvenile,8/20/25,M145841,California,Santa Cruz,Scott Creek,RR,Big Creek,Scott Creek,2,20,19.6,31.1
+M145842,SC-05A,Oncorhynchus,mykiss,83,6.2,Juvenile,8/20/25,M145842,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,19.6,31.2
+M145843,SC-06A,Oncorhynchus,mykiss,99,9.9,Juvenile,8/20/25,M145843,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,19.6,31.2
+M145844,SC-07A,Oncorhynchus,mykiss,76,4.3,Juvenile,8/20/25,M145844,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,19.6,31.3
+M145845,SC-08A,Oncorhynchus,mykiss,86,5.8,Juvenile,8/20/25,M145845,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,19.6,31.3
+M145846,SC-09A,Oncorhynchus,mykiss,94,7.8,Juvenile,8/20/25,M145846,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,19.6,31.3
+M145847,SC-10A,Oncorhynchus,mykiss,112,13.2,Juvenile,8/20/25,M145847,California,Santa Cruz,Scott Creek,RR,Big Creek,Scott Creek,2,20,20.4,30.5
+M145848,SC-11A,Oncorhynchus,mykiss,82,5.9,Juvenile,8/20/25,M145848,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,30.8
+M145849,SC-12A,Oncorhynchus,mykiss,85,6.3,Juvenile,8/20/25,M145849,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,30.9
+M145850,SC-13A,Oncorhynchus,mykiss,75,4.2,Juvenile,8/20/25,M145850,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.4,31
+M145851,SC-14A,Oncorhynchus,mykiss,73,4.2,Juvenile,8/20/25,M145851,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,31
+M145852,SC-15A,Oncorhynchus,mykiss,106,12.1,Juvenile,8/20/25,M145852,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.4,31
+M145853,SC-16A,Oncorhynchus,mykiss,79,5.4,Juvenile,8/20/25,M145853,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.4,31.1
+M145854,SC-17A,Oncorhynchus,mykiss,91,7.4,Juvenile,8/20/25,M145854,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,31.2
+M145855,SC-18A,Oncorhynchus,mykiss,125,20.7,Juvenile,8/20/25,M145855,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.4,30.7
+M145856,SC-19A,Oncorhynchus,mykiss,65,3.1,Juvenile,8/20/25,M145856,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.4,30.8
+M145857,SC-20A,Oncorhynchus,mykiss,81,5.1,Juvenile,8/20/25,M145857,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,31
+M145858,SC-21A,Oncorhynchus,mykiss,76,4.4,Juvenile,8/20/25,M145858,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,31.1
+M145859,SC-22A,Oncorhynchus,mykiss,81,5.3,Juvenile,8/20/25,M145859,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,31.1
+M145860,SC-23A,Oncorhynchus,mykiss,72,3.6,Juvenile,8/20/25,M145860,California,Santa Cruz,Scott Creek,AA,Big Creek,Scott Creek,2,20,20.4,31.2
+M145861,SC-24A,Oncorhynchus,mykiss,77,5.1,Juvenile,8/20/25,M145861,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,31.2
+M145862,SC-25A,Oncorhynchus,mykiss,64,2.3,Juvenile,8/20/25,M145862,California,Santa Cruz,Scott Creek,AR,Big Creek,Scott Creek,2,20,20.4,31.2
+M145863,BC-01A,Oncorhynchus,mykiss,141,28.6,Juvenile,8/1/25,M145863,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20,30.7
+M145864,BC-02A,Oncorhynchus,mykiss,89,8.7,Juvenile,8/1/25,M145864,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20,30.9
+M145865,BC-03A,Oncorhynchus,mykiss,111,13.9,Juvenile,8/1/25,M145865,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20,30.9
+M145866,BC-04A,Oncorhynchus,mykiss,86,6.3,Juvenile,8/1/25,M145866,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20,30.9
+M145867,BC-05A,Oncorhynchus,mykiss,100,10.6,Juvenile,8/1/25,M145867,California,Monterey,Big Creek,RR,Big Creek,Big Sur,2,20,20,30.9
+M145868,BC-06A,Oncorhynchus,mykiss,140,20.9,Juvenile,8/1/25,M145868,California,Monterey,Big Creek,RR,Big Creek,Big Sur,2,20,20,31
+M145869,BC-07A,Oncorhynchus,mykiss,185,61.5,Juvenile,8/1/25,M145869,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20,31.3
+M145870,BC-08A,Oncorhynchus,mykiss,73,3.8,Juvenile,8/1/25,M145870,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20,31.3
+M145871,BC-09A,Oncorhynchus,mykiss,91,7.4,Juvenile,8/1/25,M145871,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,30.3
+M145872,BC-10A,Oncorhynchus,mykiss,96,9.5,Juvenile,8/1/25,M145872,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,30.9
+M145873,BC-11A,Oncorhynchus,mykiss,129,22.7,Juvenile,8/1/25,M145873,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,30.8
+M145874,BC-12A,Oncorhynchus,mykiss,83,6.2,Juvenile,8/1/25,M145874,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,30.8
+M145875,BC-13A,Oncorhynchus,mykiss,127,22.7,Juvenile,8/1/25,M145875,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,30.8
+M145876,BC-14A,Oncorhynchus,mykiss,109,13.7,Juvenile,8/1/25,M145876,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.4,30.8
+M145877,BC-15A,Oncorhynchus,mykiss,151,33.4,Juvenile,8/1/25,M145877,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,31
+M145878,BC-16A,Oncorhynchus,mykiss,151,37.3,Juvenile,8/1/25,M145878,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.4,31.3
+M145879,BC-17A,Oncorhynchus,mykiss,127,19.7,Juvenile,8/1/25,M145879,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.6,30.7
+M145880,BC-18A,Oncorhynchus,mykiss,156,43.4,Juvenile,8/1/25,M145880,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.6,30.9
+M145881,BC-19A,Oncorhynchus,mykiss,151,34.7,Juvenile,8/1/25,M145881,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.6,30.9
+M145882,BC-20A,Oncorhynchus,mykiss,143,28.8,Juvenile,8/1/25,M145882,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.6,30.9
+M145883,BC-21A,Oncorhynchus,mykiss,102,10.6,Juvenile,8/1/25,M145883,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.6,30.9
+M145884,BC-22A,Oncorhynchus,mykiss,95,9.9,Juvenile,8/1/25,M145884,California,Monterey,Big Creek,AA,Big Creek,Big Sur,2,20,20.6,31
+M145885,BC-23A,Oncorhynchus,mykiss,105,11.5,Juvenile,8/1/25,M145885,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.6,31
+M145886,BC-24A,Oncorhynchus,mykiss,83,8.4,Juvenile,8/1/25,M145886,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.6,31
+M145887,BC-25A,Oncorhynchus,mykiss,106,11.5,Juvenile,8/1/25,M145887,California,Monterey,Big Creek,AR,Big Creek,Big Sur,2,20,20.6,31.3
+M145888,CR-01A,Oncorhynchus,mykiss,144,28.7,Juvenile,8/27/25,M145888,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.1,31.2
+M145889,CR-02A,Oncorhynchus,mykiss,62,2.7,Juvenile,8/27/25,M145889,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.1,31.4
+M145890,CR-03A,Oncorhynchus,mykiss,63,2.4,Juvenile,8/27/25,M145890,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.1,31.4
+M145891,CR-04A,Oncorhynchus,mykiss,76,4.2,Juvenile,8/27/25,M145891,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.1,31.5
+M145892,CR-05A,Oncorhynchus,mykiss,70,4.1,Juvenile,8/27/25,M145892,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.1,31.6
+M145893,CR-06A,Oncorhynchus,mykiss,84,7.3,Juvenile,8/27/25,M145893,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.1,31.6
+M145894,CR-07A,Oncorhynchus,mykiss,70,8.5,Juvenile,8/27/25,M145894,California,Monterey,Carmel River,AR,Carmel River,Carmel River,2,20,20.1,31.6
+M145895,CR-08A,Oncorhynchus,mykiss,85,7.2,Juvenile,8/27/25,M145895,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,20.1,31.8
+M145896,CR-09A,Oncorhynchus,mykiss,52,1,Juvenile,8/27/25,M145896,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.9,31.4
+M145897,CR-10A,Oncorhynchus,mykiss,61,3.2,Juvenile,8/27/25,M145897,California,Monterey,Carmel River,AR,Carmel River,Carmel River,2,20,19.9,N/A
+M145898,CR-11A,Oncorhynchus,mykiss,145,31.6,Juvenile,8/27/25,M145898,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.9,31.5
+M145899,CR-12A,Oncorhynchus,mykiss,63,2.9,Juvenile,8/27/25,M145899,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.9,31.5
+M145900,CR-13A,Oncorhynchus,mykiss,77,3.8,Juvenile,8/27/25,M145900,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.9,31.5
+M145901,CR-14A,Oncorhynchus,mykiss,69,3.1,Juvenile,8/27/25,M145901,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.9,31.6
+M145902,CR-15A,Oncorhynchus,mykiss,74,4.8,Juvenile,8/27/25,M145902,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.9,31.6
+M145903,CR-16A,Oncorhynchus,mykiss,88,6.4,Juvenile,8/27/25,M145903,California,Monterey,Carmel River,AA,Carmel River,Carmel River,2,20,19.9,31.7
+M145904,CR-17A,Oncorhynchus,mykiss,95,9.4,Juvenile,8/27/25,M145904,California,Monterey,Carmel River,AR,Carmel River,Carmel River,2,20,19.9,31.8
+M145905,EA- 01,Oncorhynchus,mykiss,111,14.7,Juvenile,9/9/25,M145905,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.4
+M145906,EA-02,Oncorhynchus,mykiss,105,11.1,Juvenile,9/9/25,M145906,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.4
+M145907,EA-03,Oncorhynchus,mykiss,186,64,Juvenile,9/9/25,M145907,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.5
+M145908,EA-04,Oncorhynchus,mykiss,81,5.4,Juvenile,9/9/25,M145908,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.6
+M145909,EA-05,Oncorhynchus,mykiss,105,11.6,Juvenile,9/9/25,M145909,California,Sonoma,Russian River,RR,East Austin Creek,E Austin,4,25,24.8,31.8
+M145910,EA-06,Oncorhynchus,mykiss,90,7.2,Juvenile,9/9/25,M145910,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.8
+M145911,EA-07,Oncorhynchus,mykiss,106,12.8,Juvenile,9/9/25,M145911,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,4,25,24.8,31.9
+M145912,EA-08,Oncorhynchus,mykiss,101,11.2,Juvenile,9/9/25,M145912,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.9
+M145913,EA-09,Oncorhynchus,mykiss,112,14.4,Juvenile,9/9/25,M145913,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.9
+M145914,EA-10,Oncorhynchus,mykiss,82,5.6,Juvenile,9/9/25,M145914,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,4,25,24.8,31.9
+M145915,EA-11,Oncorhynchus,mykiss,96,9.2,Juvenile,9/9/25,M145915,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.8
+M145916,EA-12,Oncorhynchus,mykiss,85,6,Juvenile,9/9/25,M145916,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,31.8
+M145917,EA-13,Oncorhynchus,mykiss,140,28,Juvenile,9/9/25,M145917,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,4,25,24.8,31.8
+M145918,EA-14,Oncorhynchus,mykiss,88,7.6,Juvenile,9/9/25,M145918,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,32
+M145919,EA-15,Oncorhynchus,mykiss,78,5.4,Juvenile,9/9/25,M145919,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,32
+M145920,EA-16,Oncorhynchus,mykiss,86,7,Juvenile,9/9/25,M145920,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.8,32
+M145921,EA-17,Oncorhynchus,mykiss,107,15.2,Juvenile,9/9/25,M145921,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,31.6
+M145922,EA-18,Oncorhynchus,mykiss,94,8.7,Juvenile,9/9/25,M145922,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,31.7
+M145923,EA-19,Oncorhynchus,mykiss,98,9.4,Juvenile,9/9/25,M145923,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,31.9
+M145924,EA-20,Oncorhynchus,mykiss,83,5.6,Juvenile,9/9/25,M145924,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,31.9
+M145925,EA-21,Oncorhynchus,mykiss,93,8.7,Juvenile,9/9/25,M145925,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,31.9
+M145926,EA-22,Oncorhynchus,mykiss,85,6.4,Juvenile,9/9/25,M145926,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,32.2
+M145927,EA-23,Oncorhynchus,mykiss,95,8.8,Juvenile,9/9/25,M145927,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,32.2
+M145928,EA-24,Oncorhynchus,mykiss,108,12.7,Juvenile,9/9/25,M145928,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,4,25,24.6,32.2
+M145929,EA-25,Oncorhynchus,mykiss,114,17.1,Juvenile,9/10/25,M145929,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.5,30
+M145930,EA-26,Oncorhynchus,mykiss,88,7.3,Juvenile,9/10/25,M145930,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.5,31.1
+M145931,EA-27,Oncorhynchus,mykiss,110,13.5,Juvenile,9/10/25,M145931,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.5,31.1
+M145932,EA-28,Oncorhynchus,mykiss,139,28.5,Juvenile,9/10/25,M145932,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,2,20,20.5,31.3
+M145933,EA-29,Oncorhynchus,mykiss,106,13.6,Juvenile,9/10/25,M145933,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.5,31.3
+M145934,EA-30,Oncorhynchus,mykiss,98,9.4,Juvenile,9/10/25,M145934,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.5,31.2
+M145935,EA-31,Oncorhynchus,mykiss,100,10.8,Juvenile,9/10/25,M145935,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.5,31.6
+M145936,EA-32,Oncorhynchus,mykiss,109,13.4,Juvenile,9/10/25,M145936,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.5,31.6
+M145937,EA-33,Oncorhynchus,mykiss,125,20.8,Juvenile,9/10/25,M145937,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.4,31.2
+M145938,EA-34,Oncorhynchus,mykiss,87,7.2,Juvenile,9/10/25,M145938,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.4,31.3
+M145939,EA-35,Oncorhynchus,mykiss,125,19.8,Juvenile,9/10/25,M145939,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.4,31.3
+M145940,EA-36,Oncorhynchus,mykiss,87,6.9,Juvenile,9/10/25,M145940,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.4,31.3
+M145941,EA-37,Oncorhynchus,mykiss,90,7.5,Juvenile,9/10/25,M145941,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.4,31.4
+M145942,EA-38,Oncorhynchus,mykiss,129,23.4,Juvenile,9/10/25,M145942,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,2,20,20.4,31.4
+M145943,EA-39,Oncorhynchus,mykiss,88,6.9,Juvenile,9/10/25,M145943,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.4,31.5
+M145944,EA-40,Oncorhynchus,mykiss,100,10.3,Juvenile,9/10/25,M145944,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,20.4,31.7
+M145945,EA-41,Oncorhynchus,mykiss,153,37.9,Juvenile,9/10/25,M145945,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,30.7
+M145946,EA-42,Oncorhynchus,mykiss,90,8.3,Juvenile,9/10/25,M145946,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,30.8
+M145947,EA-43,Oncorhynchus,mykiss,97,9.5,Juvenile,9/10/25,M145947,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,31.3
+M145948,EA-44,Oncorhynchus,mykiss,92,8.5,Juvenile,9/10/25,M145948,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,31.2
+M145949,EA-45,Oncorhynchus,mykiss,93,8.7,Juvenile,9/10/25,M145949,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,31.4
+M145950,EA-46,Oncorhynchus,mykiss,87,6.7,Juvenile,9/10/25,M145950,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,31.4
+M145951,EA-47,Oncorhynchus,mykiss,106,12.5,Juvenile,9/10/25,M145951,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,2,20,19.9,31.4
+M145952,EA-48,Oncorhynchus,mykiss,125,21.2,Juvenile,9/10/25,M145952,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,31.5
+M145953,EA-49,Oncorhynchus,mykiss,103,11,Juvenile,9/10/25,M145953,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,2,20,19.9,31.5
+M145954,EA-50,Oncorhynchus,mykiss,99,10.8,Juvenile,9/11/25,M145954,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.1,31.3
+M145955,EA-51,Oncorhynchus,mykiss,87,6.86,Juvenile,9/11/25,M145955,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.1,31.5
+M145956,EA-52,Oncorhynchus,mykiss,94,8.4,Juvenile,9/11/25,M145956,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.1,31.5
+M145957,EA-53,Oncorhynchus,mykiss,100,11.6,Juvenile,9/11/25,M145957,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.1,31.6
+M145958,EA-54,Oncorhynchus,mykiss,126,20.2,Juvenile,9/11/25,M145958,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.1,31.6
+M145959,EA-55,Oncorhynchus,mykiss,77,4.7,Juvenile,9/11/25,M145959,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,3,23,23.1,31.7
+M145960,EA-56,Oncorhynchus,mykiss,83,6.3,Juvenile,9/11/25,M145960,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.1,31.7
+M145961,EA-57,Oncorhynchus,mykiss,92,8.5,Juvenile,9/11/25,M145961,California,Sonoma,Russian River,NA,East Austin Creek,E Austin,3,23,23.1,31.6
+M145962,EA-58,Oncorhynchus,mykiss,101,13.4,Juvenile,9/11/25,M145962,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.2,29.4
+M145963,EA-59,Oncorhynchus,mykiss,143,32.9,Juvenile,9/11/25,M145963,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.2,30.9
+M145964,EA-60,Oncorhynchus,mykiss,105,12.8,Juvenile,9/11/25,M145964,California,Sonoma,Russian River,AR,East Austin Creek,E Austin,3,23,23.2,31.1
+M145965,EA-61,Oncorhynchus,mykiss,94,9.5,Juvenile,9/11/25,M145965,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.2,31.1
+M145966,EA-62,Oncorhynchus,mykiss,91,7.2,Juvenile,9/11/25,M145966,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.2,31.4
+M145967,EA-63,Oncorhynchus,mykiss,90,7.2,Juvenile,9/11/25,M145967,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.2,31.4
+M145968,EA-64,Oncorhynchus,mykiss,98,9.5,Juvenile,9/11/25,M145968,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.2,31.6
+M145969,EA-65,Oncorhynchus,mykiss,98,10.1,Juvenile,9/11/25,M145969,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23.2,31.6
+M145970,EA-66,Oncorhynchus,mykiss,102,10.9,Juvenile,9/11/25,M145970,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23,31.44
+M145971,EA-67,Oncorhynchus,mykiss,115,16.4,Juvenile,9/11/25,M145971,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23,31.6
+M145972,EA-68,Oncorhynchus,mykiss,120,20.4,Juvenile,9/11/25,M145972,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23,31.6
+M145973,EA-69,Oncorhynchus,mykiss,92,8.1,Juvenile,9/11/25,M145973,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23,31.6
+M145974,EA-70,Oncorhynchus,mykiss,95,8.9,Juvenile,9/11/25,M145974,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23,31.6
+M145975,EA-71,Oncorhynchus,mykiss,97,8.3,Juvenile,9/11/25,M145975,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23,31.7
+M145976,EA-72,Oncorhynchus,mykiss,78,5,Juvenile,9/11/25,M145976,California,Sonoma,Russian River,AA,East Austin Creek,E Austin,3,23,23,31.8
