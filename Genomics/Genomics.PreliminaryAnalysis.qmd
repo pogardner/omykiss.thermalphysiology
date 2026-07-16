@@ -20,6 +20,7 @@ library(tidyverse)
 library(MCMCpack) # for animal model
 library(ggplot2) # plots
 library(here) # easy data file access for Git
+library(adegenet)
 ```
 
 ```{r}
@@ -29,7 +30,10 @@ ctmax <- read.csv(here("Genomics/Data/Omy5_inversion_metadata_merge.csv"))
 # SNP data using 96 SNP panel from Abadia-Cordoso et al 2011
 # Data received 7/2/26
 snp <- read.csv(here("Genomics/Data/PaigeAdapCapFishSNPGenotypes.raw.csv"))
+colnames(snp)
 ```
+
+(
 
 ## Merge Dataframes
 
@@ -46,5 +50,139 @@ snp$NMFS_DNA_ID_use <- substr(snp$Sample_ID,1,7)
 colnames(ctmax)
 geno_pheno <- left_join(ctmax,snp, by ="NMFS_DNA_ID_use")
 
-write.csv(geno_pheno, "data/merged_PaigeAdapCapSNPs.csv", row.names = FALSE)
+#write.csv(geno_pheno, "data/merged_PaigeAdapCapSNPs.csv", row.names = FALSE)
 ```
+
+The new dataframe *geno_pheno* is the merged dataset we can now work with more easily.
+
+Lastly, I exclude the sex chromosome and OmyAldA from the data frame, since that's adaptive and non-neutral.
+
+```{r}
+geno_pheno_neutral <- geno_pheno %>% 
+  dplyr::select(-c(SexID,SexID.1))
+```
+
+## Developing a clear workflow
+
+I think we will start with jumping into a genomic relatedness matrix.
+
+Matrix type: VanRaden (<https://www.sciencedirect.com/science/article/pii/S0022030208709901?via%3Dihub>)
+
+Notes from Abadia-Cordoso et al 2011:
+
+-   SNP's are usually bi-allelic
+
+-   Structure of the data:
+
+    -   columns that end in ".1" is the pair. So, for example, 3 and 3 is homozygous, 1 and 3 is heterozygous
+
+Let's give this matrix a go. I will start with the AGHmatrix package.
+
+Workflow:
+
+1.  Collapse alleles into SNP data: adegenet package should better be able to handle the data format
+2.  Build GRM using AGHmatrix
+3.  Do some quality checks- how?
+4.  Invert the matrix - MCMCglmm (unless there's a clear way to do this in the AGHmatrix package)
+
+## 1. Adegenet
+
+### Install package
+
+```{r}
+# other useful packages, according to the tutorial I'm following online
+library("ape")
+library("pegas")
+library("seqinr")
+library("ggplot2")
+```
+
+#### *Adegenet notes*
+
+There are two main classes of objects for storing genetic marker data, depending on the level at which the genetic information is considered:
+
+-   genind for individual genotypes
+
+-   genpop is used for alleles numbers counted by populations, where a population is any grouping of individuals
+
+### Manually designating 0,1,2 snps
+
+I'm pretty sure all this is wrong. I think adegenet can handle this, the columns just need to be renamed.
+
+Don't forget to get rid of sex id column!!! And check for other adaptive alleles (ask Ellen?)
+
+Now create a genind object for adegenet
+
+```{r}
+# replace all decimal points with a "_", otherwise adegenet doesn't know how to read it
+snp_neutral <- snp %>% 
+  dplyr::select(-c(SexID,SexID.1))
+
+# rename columns so that genind can better read them
+colnames(snp_neutral)<- gsub(".", "_", colnames(snp_neutral), fixed = TRUE)
+colnames(snp_neutral)<- gsub("_1", "_2", colnames(snp_neutral), fixed = TRUE)
+colnames(snp_neutral) <- ifelse(
+  grepl("")
+)
+
+gen <- df2genind(
+  geno_df,
+  sep = "/",
+  ind.names = ids,
+  ploidy = 2,
+  type = "codom",
+  strata = 5
+)
+?df2genind
+
+gen
+gen_sum <- summary(gen)
+```
+
+### HWE - Sanity Check
+
+```{r}
+expected_het <- gen_sum$Hexp
+observed_het <- gen_sum$Hobs
+
+# plot
+plot(expected_het, observed_het,
+     main = "Expected vs Observed Heterozygosity (Hexp)",
+     xlab = "Expected Het",
+     ylab = "Observed Het",
+     pch = 20,
+     col="blue")
+abline(0,1,col = "red",lty=2)
+```
+
+This was a sanity check to see if what I had was in HWE.
+
+**Question**: What is acceptable for HWE deviation? Is this concerning?
+
+Check: HWE deviation in each watershed
+
+### CKMRsim: Look for Full- Sibs
+
+I don't think we need to exclude full-sibs from the animal model, but it will still be helpful as a sanity check.
+
+### DAPC Plot - Sanity Check
+
+The genind object made above didn't work properly. For example, we should have 5 groupings. This is important for the DAPC.
+
+From ChatGPT:
+
+```{r}
+# first, decide number of PC's to run
+xval <- xvalDapc(
+    gen,
+    pop(gen),
+    training.set = 0.9,
+    result = "groupMean",
+    center = TRUE,
+    scale = FALSE,
+    n.pca.max = 100
+)
+table(pop(gen))
+```
+
+Left off: I now need to code this object so that AGHmatrix can read it. So I need every combination to be either a 0,1, or 2, depending on homo vs heterozygosity.
