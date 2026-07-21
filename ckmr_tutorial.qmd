@@ -53,11 +53,11 @@ life_stages %>%
 
 ### Estimating power for relationship inference
 
-Estimatingi power for pairwise relationships involves MCMC simulations from the allele frequencies in the population. So first we have to estimate the allele freqs from our genotype data set. And we have to present those allele frequencies in a specific format that CKMRsim is expecting.
+Estimating power for pairwise relationships involves MCMC simulations from the allele frequencies in the population. So first we have to estimate the allele freqs from our genotype data set. And we have to present those allele frequencies in a specific format that CKMRsim is expecting.
 
 #### Allele frequency input format
 
-Genome coordinates of markers are not required but th einput format has a place to record the chromosome and position of each marker. If these are not known, we can use dummy values. The values should have no effect as long as there is no physical linkage.
+Genome coordinates of markers are not required but the input format has a place to record the chromosome and position of each marker. If these are not known, we can use dummy values. The values should have no effect as long as there is no physical linkage.
 
 The expected format can be found on the website linked above. Note that the following columns are expected:
 
@@ -71,21 +71,21 @@ The expected format can be found on the website linked above. Note that the foll
 
 -   Freq: frequency of each allele in the populations. Should sum to 1 over each locus
 
-#### Computing allele frequencies from genotype data 
+#### Computing allele frequencies from genotype data
 
 In tidyverse, make a long data frame with columns NMFS_DNA_ID, Locus, gene_copy, and Allele, and the summarising as appropriate. "Notice that, since these fish are diploids, we will let `gene_copy` be `a` or `b` to denote whether we are talking about the allelic type of the first or second gene copy of the locus in a diploid individual. To do this, we will rename the column headers to look like `Locus.gene_copy`, then do some gathering and separating."
 
 ```{r}
 # make note of the current order of loci in the data set
-nc <- ncol(genos1)
-loci <- str_replace(names(genos1)[seq(2, nc, by = 2)], "\\.\\.\\.[0-9]+$", "")
+ncprac <- ncol(genos1)
+lociprac <- str_replace(names(genos1)[seq(2, nc, by = 2)], "\\.\\.\\.[0-9]+$", "")
 
 #  reset the locus names
-names(genos1)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".")
-names(genos1)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".")
+names(genos1)[seq(2, ncprac, by = 2)] <- str_c(lociprac, "1", sep = ".")
+names(genos1)[seq(3, ncprac, by = 2)] <- str_c(lociprac, "2", sep = ".")
 
 # then make some long format genotypes
-long_genos <- genos1 %>% 
+long_genosprac <- genos1 %>% 
   gather(key = "loc", value = "Allele", -NMFS_DNA_ID) %>%
   separate(loc, into = c("Locus", "gene_copy"), sep = "\\.") %>%
   mutate(Allele = as.character(Allele)) %>%

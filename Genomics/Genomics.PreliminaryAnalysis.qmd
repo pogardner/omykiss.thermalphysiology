@@ -33,8 +33,6 @@ snp <- read.csv(here("Genomics/Data/PaigeAdapCapFishSNPGenotypes.raw.csv"))
 colnames(snp)
 ```
 
-(
-
 ## Merge Dataframes
 
 I need to merge these two data frames for Carlos. The only issue is Carlos says that 12 samples didn't run because they didn't pass quality check, but the same number of rows are present in each data frame. I'm not sure why that is- I will merge the data frames and ask Carlos.
@@ -105,40 +103,6 @@ There are two main classes of objects for storing genetic marker data, depending
 
 -   genpop is used for alleles numbers counted by populations, where a population is any grouping of individuals
 
-### Manually designating 0,1,2 snps
-
-I'm pretty sure all this is wrong. I think adegenet can handle this, the columns just need to be renamed.
-
-Don't forget to get rid of sex id column!!! And check for other adaptive alleles (ask Ellen?)
-
-Now create a genind object for adegenet
-
-```{r}
-# replace all decimal points with a "_", otherwise adegenet doesn't know how to read it
-snp_neutral <- snp %>% 
-  dplyr::select(-c(SexID,SexID.1))
-
-# rename columns so that genind can better read them
-colnames(snp_neutral)<- gsub(".", "_", colnames(snp_neutral), fixed = TRUE)
-colnames(snp_neutral)<- gsub("_1", "_2", colnames(snp_neutral), fixed = TRUE)
-colnames(snp_neutral) <- ifelse(
-  grepl("")
-)
-
-gen <- df2genind(
-  geno_df,
-  sep = "/",
-  ind.names = ids,
-  ploidy = 2,
-  type = "codom",
-  strata = 5
-)
-?df2genind
-
-gen
-gen_sum <- summary(gen)
-```
-
 ### HWE - Sanity Check
 
 ```{r}
@@ -161,9 +125,282 @@ This was a sanity check to see if what I had was in HWE.
 
 Check: HWE deviation in each watershed
 
-### CKMRsim: Look for Full- Sibs
+## 2. CKMRsim: Look for Full- Sibs (From E. Anderson Git)
 
-I don't think we need to exclude full-sibs from the animal model, but it will still be helpful as a sanity check.
+First, I will check for full-sibs in just the SNP data. Then I will add in the neutral mhaps and check for full-sibs again, then I will add in the adaptive mhaps too.
+
+```{r}
+library(CKMRsim)
+library(tidyverse)
+library(here)
+
+snp1 <- snp %>% 
+  dplyr::select(-c(SexID,SexID.1,Sample_ID)) %>% 
+  dplyr::select(NMFS_DNA_ID_use, everything()) #make NMFS_DNA_ID_use the first column
+
+```
+
+This will be done using the dataframe called snp1, which has been appropriately cleaned.
+
+### Estimating power for relationship inference
+
+Estimating power for pairwise relationships involves MCMC simulations from the allele frequencies in the population. So first we have to estimate the allele freqs from our genotype data set. And we have to present those allele frequencies in a specific format that CKMRsim is expecting.
+
+#### Allele frequency input format
+
+Genome coordinates of markers are not required but the input format has a place to record the chromosome and position of each marker. If these are not known, we can use dummy values. The values should have no effect as long as there is no physical linkage.
+
+Note that the following columns are expected:
+
+-   Chrom: chromosome that the marker is on
+
+-   Locus: name of markers/loci (no spaces!)
+
+-   Pos: genome coordinates (numeric)
+
+-   Allele: name of each allele. must be a character, so you might have to coerce numbers into characters
+
+-   Freq: frequency of each allele in the populations. Should sum to 1 over each locus
+
+```{r}
+# make the periods be _ for the next steps.
+snp1 <- snp1 %>% 
+  rename_with(~ gsub(".", "_",.x, fixed = TRUE))
+# make note of the current order of loci in the data set
+nc <- ncol(snp1)
+loci <- str_replace( # expects string, pattern, replacement
+  names(snp1)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+#  reset the locus names
+names(snp1)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
+names(snp1)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
+names(snp1)
+
+# then make some long format genotypes
+long_genos <- snp1 %>% 
+  gather(key = "loc", value = "Allele", -NMFS_DNA_ID_use) %>%
+  separate(loc, into = c("Locus", "gene_copy"), sep = "\\.") %>%
+  mutate(Allele = as.character(Allele)) %>%
+  mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
+  rename(Indiv = NMFS_DNA_ID_use)
+colnames(snp1)
+
+str(long_genos)
+unique(long_genos$Locus)
+```
+
+#### Calculate allele frequencies
+
+```{r}
+colnames(long_genos)
+anyDuplicated(names(long_genos))
+alle_freqs <- long_genos %>%
+  count(Locus,Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA, # leave this as NA
+         LocIdx = NA) %>% # leave this as NA
+  filter(!is.na(Allele)) # removing NA's is really important in this step!
+
+# see what that looks like:
+alle_freqs
+```
+
+Now we can make a dataframe that CKMRsim can use.
+
+```{r}
+afreqs_ready <- reindex_markers(alle_freqs)
+```
+
+#### Create CKMRsim object
+
+```{r}
+ckmr <- create_ckmr(
+  D = afreqs_ready,
+  kappa_matrix = kappas[c("PO", "FS", "HS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE, # function describes genotyping error model applied to model for computing likelihoods. TGIE is for integers
+  ge_mod_true = ge_model_TGIE, # genotyping error model to simulate genotype data
+  ge_mod_assumed_pars_list = list(epsilon = 0.005), # named parameters for assumed genotyping error model (can leave blank and use defaults)
+  ge_mod_true_pars_list = list(epsilon = 0.005) # for true genotyping error
+)
+
+ckmr
+```
+
+This looks great so far! This is a bi-allelic data frame, so we feel good about loci having 2 alleles. Remember that this is an S3 object with class ckmr.
+
+#### Simulate genotype pairs + calculate log-probabilities
+
+```{r}
+ex1_Qs <- simulate_Qij(ckmr, 
+                       calc_relats = c("PO", "FS", "U"),
+                       sim_relats = c("PO", "FS", "HS", "U") )
+ex1_Qs
+```
+
+#### Compute log-likelihood ratios to view them
+
+```{r}
+FS_U_logls <- extract_logls(ex1_Qs,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+FS_U_logls
+```
+
+Visualize this in ggplot.
+
+```{r}
+ggplot(FS_U_logls,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+
+From this, we see that there is little overlap in the FS/U log likelihood ratios.
+
+```{r}
+ggplot(FS_U_logls %>% filter(true_relat %in% c("FS", "U")),
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+
+#### Estimating false negative and positive rates
+
+```{r}
+ex1_FS_is <- mc_sample_simple(ex1_Qs, 
+                 nu = "FS",
+                 de = "U")
+
+ex1_FS_is
+```
+
+The tutorial for CKMRsim recommends requiring that the FPR (false positive rate) be about 10-100 times smaller than the reciprocal of the number of comparisons. In this case, thats
+
+```{r}
+0.1*(494*494) ^-1
+```
+
+```{r}
+ex1_PO_is_8_12 <- mc_sample_simple(ex1_Qs, 
+                 nu = "FS",
+                 de = "U", 
+                 lambda_stars = seq(12, 15, by = .1))
+ex1_PO_is_8_12
+```
+
+We should set logl to at least 15 to accomplish what the authors recommend for FPR.
+
+#### Screen for duplicate samples
+
+```{r}
+matchers <- find_close_matching_genotypes(LG = long_genos,
+                                          CK = ckmr,
+                                          max_mismatch = 6)
+
+matchers
+
+pairs_matchers <- matchers %>%
+  left_join(
+    ctmax %>%
+      dplyr::select(NMFS_DNA_ID_use, WATERSHED,LENGTH,COLLECTION_DATE,SAMPLE_ID) %>%
+      rename(indiv_1 = NMFS_DNA_ID_use,
+             Watershed_1 = WATERSHED,
+             Length_1 =LENGTH,
+             Collection_Date_1 = COLLECTION_DATE,
+             Sample_ID_1 = SAMPLE_ID),
+    by = "indiv_1"
+  ) %>%
+  left_join(
+    ctmax %>%
+      dplyr::select(NMFS_DNA_ID_use, WATERSHED,LENGTH,COLLECTION_DATE,SAMPLE_ID) %>%
+      rename(indiv_2 = NMFS_DNA_ID_use,
+             Watershed_2 = WATERSHED,
+             Length_2 =LENGTH,
+             Collection_Date_2 = COLLECTION_DATE,
+             Sample_ID_2 = SAMPLE_ID),
+    by = "indiv_2"
+  )
+```
+
+I found three pairs of matches. It's strange that a Big Creek and Scott Creek individual matched- I will remove both individuals from the data set.
+
+I will keep the first (indiv_1) from the other two pairs (M145494 and M145595)
+
+```{r}
+write.csv(pairs_matchers, "Data/snps_matchedindiv_ckmr.csv", row.names = FALSE)
+```
+
+#### Compute logl ratios for pairwise comparisons
+
+```{r}
+fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
+                                              D2 = long_genos,
+                                              CK = ckmr,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+# note, num_cores is set to 1 because more than that breaks
+# it on CRAN checks.  But, leave it blank (i.e., don't use the
+# num_core option) to, by default, use all
+# your cores in parallel on a non-windows machine.
+
+# I used log 12 bc that's what Kerry used
+
+fs_pairwise_logls12 <- fs_pairwise_logls %>%
+  filter(logl_ratio > 12) %>%
+  arrange(desc(logl_ratio))
+```
+
+```{r}
+write.csv(fs_pairwise_logls12,"Data/snps_fs_pairwise_logls12.csv")
+```
+
+## 3. Visualize CKMRsim output
+
+### Merge sibling data frame with metadata
+
+```{r}
+colnames(fs_pairwise_logls)
+colnames(ctmax)
+
+# chatGPT helped with this block
+pairs_FS12 <- fs_pairwise_logls12 %>%
+  left_join(
+    ctmax %>%
+      dplyr::select(NMFS_DNA_ID_use, WATERSHED,LENGTH,COLLECTION_DATE,SAMPLE_ID) %>%
+      rename(D1_indiv = NMFS_DNA_ID_use,
+             Watershed_1 = WATERSHED,
+             Length_1 =LENGTH,
+             Collection_Date_1 = COLLECTION_DATE,
+             Sample_ID_1 = SAMPLE_ID),
+    by = "D1_indiv"
+  ) %>%
+  left_join(
+    ctmax %>%
+      dplyr::select(NMFS_DNA_ID_use, WATERSHED,LENGTH,COLLECTION_DATE,SAMPLE_ID) %>%
+      rename(D2_indiv = NMFS_DNA_ID_use,
+             Watershed_2 = WATERSHED,
+             Length_2 =LENGTH,
+             Collection_Date_2 = COLLECTION_DATE,
+             Sample_ID_2 = SAMPLE_ID),
+    by = "D2_indiv"
+  )
+
+# add a column to check if watersheds are the same
+pairs_FS12 <- pairs_FS12 %>%
+  mutate(Watersheds_same = Watershed_1 == Watershed_2)
+```
+
+Picking up tomorrow 7/21: plot this! Somehow like Kerry's plot.
+
+Then, combine in the mhap data frames and do the same steps again.
 
 ### DAPC Plot - Sanity Check
 
