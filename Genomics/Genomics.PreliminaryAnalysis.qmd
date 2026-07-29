@@ -278,6 +278,8 @@ ex1_FS_is <- mc_sample_simple(ex1_Qs,
                  de = "U")
 
 ex1_FS_is
+
+# question: should I check FS against HS?
 ```
 
 The tutorial for CKMRsim recommends requiring that the FPR (false positive rate) be about 10-100 times smaller than the reciprocal of the number of comparisons. In this case, thats
@@ -326,6 +328,7 @@ pairs_matchers <- matchers %>%
              Sample_ID_2 = SAMPLE_ID),
     by = "indiv_2"
   )
+pairs_matchers
 ```
 
 I found three pairs of matches. It's strange that a Big Creek and Scott Creek individual matched- I will remove both individuals from the data set.
@@ -336,11 +339,19 @@ I will keep the first (indiv_1) from the other two pairs (M145494 and M145595)
 write.csv(pairs_matchers, "Data/snps_matchedindiv_ckmr.csv", row.names = FALSE)
 ```
 
+#### Filter out matchers
+
+```{r}
+long_genos_filtered <- long_genos %>% 
+  filter(!Indiv %in% c("M145767","M145542", # matching indivs from scott creek and big creek
+                       "M145524", "M145692"))
+```
+
 #### Compute logl ratios for pairwise comparisons
 
 ```{r}
-fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
-                                              D2 = long_genos,
+fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos_filtered,
+                                              D2 = long_genos_filtered,
                                               CK = ckmr,
                                               numer = "FS",
                                               denom = "U", 
@@ -398,28 +409,167 @@ pairs_FS12 <- pairs_FS12 %>%
   mutate(Watersheds_same = Watershed_1 == Watershed_2)
 ```
 
-Picking up tomorrow 7/21: plot this! Somehow like Kerry's plot.
+#### Heatmap of relatedness
 
-Then, combine in the mhap data frames and do the same steps again.
+Not entirely sure how to do this yet- maybe geom_tile from ggplot2 or pheatmap
 
-### DAPC Plot - Sanity Check
+To keep progressing, I'm going to skip this for now. I'm not entirely sure what should go on the diagonal/ 1:1 line...
 
-The genind object made above didn't work properly. For example, we should have 5 groupings. This is important for the DAPC.
+### 4. Add in Neutral mhaps to CKMRsim
 
-From ChatGPT:
+Ok so we have now assessed full-sibling pairs using CKMRsim on just the SNP data. However, we are eventually going to use all the mhap data for the matrix, so this next step combines neutral mhap data with the snp data, and follows the same steps as above. Remember that mhaps are multi-allelic. I don't think that should cause any problems at this stage, but it will have to be dealt with before we build the matrix.
+
+#### Load in neutral mhap data frame and prep
 
 ```{r}
-# first, decide number of PC's to run
-xval <- xvalDapc(
-    gen,
-    pop(gen),
-    training.set = 0.9,
-    result = "groupMean",
-    center = TRUE,
-    scale = FALSE,
-    n.pca.max = 100
-)
-table(pop(gen))
+mhap1 <- read.csv(here("Genomics/Data/Neutral_genotypes_mhapcode_wide.csv"))
 ```
 
-Left off: I now need to code this object so that AGHmatrix can read it. So I need every combination to be either a 0,1, or 2, depending on homo vs heterozygosity.
+Remove the same individuals removed above:
+
+```{r}
+mhap1 <- mhap1 %>% 
+  filter(!indiv.ID %in% c("M145767","M145542", # matching indivs from scott creek and big creek
+                       "M145524", "M145692"))
+```
+
+Calculate allele frequencies
+
+```{r}
+nc <- ncol(mhap1)
+loci <- str_replace( # expects string, pattern, replacement
+  names(mhap1)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+#  reset the locus names
+names(mhap1)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
+names(mhap1)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
+names(mhap1)
+
+# then make some long format genotypes
+mhaplong_genos <- mhap1 %>% 
+  gather(key = "loc", value = "Allele", -indiv.ID) %>%
+  separate(loc, into = c("Locus", "gene_copy"), sep = "\\.") %>%
+  mutate(Allele = as.character(Allele)) %>%
+  mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
+  rename(Indiv = indiv.ID)
+colnames(mhaplong_genos)
+
+str(mhaplong_genos)
+unique(mhaplong_genos$Locus)
+```
+
+Now I think we can just go ahead and combine data frames.
+
+```{r}
+mhap_snp <- bind_rows(long_genos_filtered, mhaplong_genos)
+```
+
+#### Calculate allele freqs
+
+```{r}
+alle_freqs2 <- mhap_snp %>%
+  count(Locus,Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA, # leave this as NA
+         LocIdx = NA) %>% # leave this as NA
+  filter(!is.na(Allele)) # removing NA's is really important in this step!
+
+# see what that looks like:
+alle_freqs2
+```
+
+Make a CKRMsim object
+
+```{r}
+afreqs_ready2 <- reindex_markers(alle_freqs2)
+```
+
+#### Create CKRMsim object
+
+```{r}
+ckmr2 <- create_ckmr(
+  D = afreqs_ready2,
+  kappa_matrix = kappas[c("PO", "FS", "HS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE, # function describes genotyping error model applied to model for computing likelihoods. TGIE is for integers
+  ge_mod_true = ge_model_TGIE, # genotyping error model to simulate genotype data
+  ge_mod_assumed_pars_list = list(epsilon = 0.005), # named parameters for assumed genotyping error model (can leave blank and use defaults)
+  ge_mod_true_pars_list = list(epsilon = 0.005) # for true genotyping error
+)
+
+ckmr2
+```
+#### Simulate genotype pairs + calculate log-probabilities
+
+```{r}
+ex1_Qs2 <- simulate_Qij(ckmr2, 
+                       calc_relats = c("PO", "FS", "U"),
+                       sim_relats = c("PO", "FS", "HS", "U") )
+ex1_Qs2
+
+mhap_snp_PO_is_8_12 <- mc_sample_simple(ex1_Qs2, 
+                 nu = "FS",
+                 de = "U")
+ex1_PO_is_8_12
+```
+#### Compute log-likelihood ratios to view them
+
+```{r}
+FS_U_logls2 <- extract_logls(ex1_Qs2,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+FS_U_logls2
+```
+Visualize this in ggplot.
+
+```{r}
+ggplot(FS_U_logls2,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+```{r}
+ggplot(FS_U_logls2 %>% filter(true_relat %in% c("FS", "U")),
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+*Consider checking for matchers again with the two dataframes combined.*
+
+```{r}
+fs_pairwise_logls2 <- pairwise_kin_logl_ratios(D1 = mhap_snp,
+                                              D2 = mhap_snp,
+                                              CK = ckmr2,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+fs_pairwise_logls12_mhap_snp <- fs_pairwise_logls2 %>%
+  filter(logl_ratio > 12) %>%
+  arrange(desc(logl_ratio))
+
+fs_pairwise_logls_mhap_snp <- fs_pairwise_logls2 %>%
+ # filter(logl_ratio > 12) %>%
+  arrange(desc(logl_ratio))
+
+fs_pairwise_logls12_mhap_snp
+
+PO_U_logls <- extract_logls(ex1_Qs2,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+
+ex1_PO_is_8_12 %>%
+  filter(FPR > 1.275727e-08) %>%
+  arrange(FPR) %>%
+  slice(1)
+```
+I think something strange happened here- I found 2.5X full sibs that I found in the snp analysis alone. I would have expected less, I think.
+
+PICKING UP
+Why are there more full-sibs found in the new dataframe compared to the old?
+Maybe 12 is wrong?

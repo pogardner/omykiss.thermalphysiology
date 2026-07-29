@@ -173,6 +173,58 @@ p <- treat2ALL %>%
 ggsave("output/treat2ALLctmax.png", plot = p, height = 5, width = 6, dpi= 300, units = "in")
 ```
 
+```{r}
+sum_t2 <- treat2ALL %>% 
+  group_by(WatershedYear) %>% 
+  summarize(mean_LOE = mean(LOE.Temp_C),
+            sd_LOE = sd(LOE.Temp_C),
+            median_LOE = median(LOE.Temp_C),
+            mean_length = mean(Length_mm),
+            sd_length = sd(Length_mm),
+            median_length = median(Length_mm)
+  ) %>% 
+  mutate(LocationYear = WatershedYear) %>% 
+  ungroup()
+```
+
+### Part 1b: Welch's ANOVA
+
+To directly compare each group, I use a Welch's ANOVA.
+
+```{r}
+library(rstatix)
+welch_result <- treat2ALL%>% 
+  welch_anova_test(LOE.Temp_C ~ WatershedYear)
+welch_result
+```
+
+Games-Howell Post Hoc Test
+
+```{r}
+posthoc_result <- treat2ALL %>% 
+  games_howell_test(LOE.Temp_C ~ WatershedYear) %>% 
+  add_cld()
+posthoc_result
+```
+
+Make a CLD
+
+```{r}
+cld_gh <- cld::make_cld(posthoc_result)
+cld_gh
+cld_gh = cld_gh %>% 
+  rename(LocationYear = group)
+print(cld_gh)
+write.csv(cld_gh, "treatment2.CLD.gameshowelltest.csv",row.names = FALSE)
+```
+
+Merge summary data
+
+```{r}
+merged_sum_cld <- left_join(sum_t2, cld_gh, by = "LocationYear") %>% 
+  dplyr::select(-LocationYear)
+```
+
 ## Part 2: Length effect
 
 I assumed the effect of length on CTmax would be conserved across populations and not vary intraspecifically. This is because there is no evidence to suggest otherwise, and also to increase sample size.

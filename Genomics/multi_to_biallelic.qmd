@@ -1,0 +1,101 @@
+---
+title: "Multi to biallelic"
+format: html
+editor: visual
+---
+
+## Prepping SNP/mhap data for GRM
+
+There are three key things that need to happen for the SNP and microhaplotype data to be prepped for constructing the GRM. The key thing to remember is that both data types need to be in 0, 1, and 2 allele dosage format, where dosage counts the number alleles of each type.
+
+1.  Convert SNP data to allele dosage. I will make a function to do this, which can be reused.
+2.  Count unique microhaplotypes for each mhap
+3.  Convert mhaps into allele dosage, where each unique mhap is its own column.
+
+Once both data sets are in that format, they are combined into one data set.
+
+## Structured Plan
+
+1.  import SNP and mhap csv's, separately.
+2.  Format column names properly. I believe they should end in \_#
+3.  Convert SNPs into dosages
+4.  Find each unique mhap at each locus
+5.  Expand into dosage columns
+
+Since there may be a lot of columns per mhap locus, it might be beneficial to weight the alleles.
+
+```{r}
+library(here)
+library(tidyverse)
+```
+
+### 1. Import and clean .csv files
+
+```{r}
+# SNP
+snp_raw <- read.csv(here("Genomics/Data/PaigeAdapCapFishSNPGenotypes.raw.csv"))
+
+# Neutral mhap
+neutral_mhap <- read.csv(here("Genomics/Data/Neutral_genotypes_mhapcode_wide.csv"))
+
+# Adaptive mhap
+adap_mhap <- read.csv(here("Genomics/Data/Adaptive_haplotypes_2col_wide.csv"))
+
+# merged adaptive and neutral mhap data frames
+all_mhap <- merge(neutral_mhap, adap_mhap, by = "indiv.ID")
+```
+
+Get rid of the sex ID column in the SNP data frame.
+
+```{r}
+snp <- snp_raw %>% 
+  dplyr::select(-c(SexID,SexID.1))
+```
+
+### 2. Format columns
+
+Reformatting columns for SNPs:
+
+```{r}
+snp <- snp %>% 
+  rename_with(~ gsub(".", "_",.x, fixed = TRUE))
+# make note of the current order of loci in the data set
+nc <- ncol(snp)
+loci <- str_replace( # expects string, pattern, replacement
+  names(snp)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+#  reset the locus names
+names(snp)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
+names(snp)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
+names(snp)
+
+# rename Sample_ID column to match mhaps. so that's indiv.ID
+snp <- snp %>% 
+  rename(indiv.ID = Sample_ID)
+```
+
+Reformatting columns for mhaps:
+
+I left off here. The column names need to match the format of the SNP. I want to leave the \_hap piece on each of the haplotype loci so that it's clear which are SNPs and which are mhaps.
+
+```{r}
+snp <- snp %>% 
+  rename_with(~ gsub(".", "_",.x, fixed = TRUE))
+# make note of the current order of loci in the data set
+nc <- ncol(snp)
+loci <- str_replace( # expects string, pattern, replacement
+  names(snp)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+#  reset the locus names
+names(snp)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
+names(snp)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
+names(snp)
+
+# rename Sample_ID column to match mhaps. so that's indiv.ID
+snp <- snp %>% 
+  rename(indiv.ID = Sample_ID)
+```
