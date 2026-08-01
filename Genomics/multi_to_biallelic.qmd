@@ -40,6 +40,7 @@ neutral_mhap <- read.csv(here("Genomics/Data/Neutral_genotypes_mhapcode_wide.csv
 
 # Adaptive mhap
 adap_mhap <- read.csv(here("Genomics/Data/Adaptive_haplotypes_2col_wide.csv"))
+# this is the wrong file- we need the hap_code file, not haplotypes. 
 
 # merged adaptive and neutral mhap data frames
 all_mhap <- merge(neutral_mhap, adap_mhap, by = "indiv.ID")
@@ -50,7 +51,13 @@ Get rid of the sex ID column in the SNP data frame.
 ```{r}
 snp <- snp_raw %>% 
   dplyr::select(-c(SexID,SexID.1))
+
+?ckmrsim
 ```
+
+### 1a. Converting haplotypes to hapcodes
+
+The adaptive panel has
 
 ### 2. Format columns
 
@@ -81,21 +88,74 @@ Reformatting columns for mhaps:
 I left off here. The column names need to match the format of the SNP. I want to leave the \_hap piece on each of the haplotype loci so that it's clear which are SNPs and which are mhaps.
 
 ```{r}
-snp <- snp %>% 
-  rename_with(~ gsub(".", "_",.x, fixed = TRUE))
 # make note of the current order of loci in the data set
-nc <- ncol(snp)
-loci <- str_replace( # expects string, pattern, replacement
-  names(snp)# returns the names of the columns
-  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+nc2 <- ncol(all_mhap)
+loci2 <- str_replace( # expects string, pattern, replacement
+  names(all_mhap)# returns the names of the columns
+  [seq(2, nc2, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
   "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
 
 #  reset the locus names
-names(snp)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
-names(snp)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
-names(snp)
+names(all_mhap)[seq(2, nc, by = 2)] <- str_c(loci2, "1", sep = ".") #put a .1 at the end of the first allele
+names(all_mhap)[seq(3, nc, by = 2)] <- str_c(loci2, "2", sep = ".") # put a .2 at the end of the second allele
+names(all_mhap)
 
-# rename Sample_ID column to match mhaps. so that's indiv.ID
-snp <- snp %>% 
-  rename(indiv.ID = Sample_ID)
 ```
+
+### 3a. Combine mhaps into genotypes
+
+We want to combine the alleles into one genotype, structured x/y. First, the mhap columns need to be coded properly.
+
+I need R to count the number of unique values for each pair of haplotypes. This should be relatively straightforward- we want R to recognize two columns with the same name (excluding haplotype.1 and haplotype.2) as the same locus.
+
+This below code works (thanks chat), but I think I need to go back and tell it to leave 0's as 0's.
+
+```{r}
+# Chat GPT mostly wrote this
+
+# this creates another version of the original data frame to play with
+adap_code <- adap_mhap
+
+# Find the base name of each locus for each column allele (remove .1/.2 suffix)
+bases <- unique(sub("\\.[12]$", "", names(adap_mhap))) # sub replacestext in character string: sub(pattern, replacement, text)
+# so for each unique base code (or locus), counts the number of unique values
+
+for (b in bases) { # loop over each base
+
+  cols <- paste0(b, c(".1", ".2")) # this recreates the column names
+
+  # Make sure both columns (.1 and .2 exist)
+  if (!all(cols %in% names(adap_mhap))) next # %in% checks whether values are present
+  # all reutrns true only if every value is true
+  # ! means not, so "false"
+  # so then  this says, if the answer is false or missing, skip the pair
+
+  # collect all values in a pair (excluding 0)
+  vals <- setdiff(unique(unlist(adap_mhap[cols])), "0") # unlist turns cols into one long vector and unique removes duplicates - so vals contains every unique haplotype in that pair
+
+  # Create lookup table
+  lookup <- setNames(seq_along(vals), vals) # seq_along makes numbers from 1 to length of vals and setNames adds names to those numbers
+
+  # Replace values with numbers, but keep 0 as 0
+adap_code[cols] <- lapply(adap_mhap[cols], function(x) {
+  out <- lookup[x]
+  out[x == "0"] <- 0
+  out
+})
+}
+
+adap_code
+#make sure 0's are maintained
+sum(adap_code == 0, na.rm = TRUE)
+
+length(unique(adap_mhap$Omy_Ch25_Six6_61287415_haplotype.2))
+length(unique(adap_code$Omy_Ch25_Six6_61287415_haplotype.2))
+```
+
+```{r}
+write.csv(adap_code, "Data/Adaptive_genotypes_mhapcode_wide.csv", row.names = FALSE)
+```
+
+### 3b. Combine SNPs into genotypes
+
+Ok so I didn't make a mistake- the file I loaded in was the haplotypes, but I need the hap_code file and I don't think this has been made yet.
