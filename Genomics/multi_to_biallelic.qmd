@@ -42,73 +42,14 @@ neutral_mhap <- read.csv(here("Genomics/Data/Neutral_genotypes_mhapcode_wide.csv
 adap_mhap <- read.csv(here("Genomics/Data/Adaptive_haplotypes_2col_wide.csv"))
 # this is the wrong file- we need the hap_code file, not haplotypes. 
 
-# merged adaptive and neutral mhap data frames
-all_mhap <- merge(neutral_mhap, adap_mhap, by = "indiv.ID")
-```
-
-Get rid of the sex ID column in the SNP data frame.
-
-```{r}
-snp <- snp_raw %>% 
-  dplyr::select(-c(SexID,SexID.1))
-
-?ckmrsim
-```
-
-### 1a. Converting haplotypes to hapcodes
-
-The adaptive panel has
-
-### 2. Format columns
-
-Reformatting columns for SNPs:
-
-```{r}
-snp <- snp %>% 
-  rename_with(~ gsub(".", "_",.x, fixed = TRUE))
-# make note of the current order of loci in the data set
-nc <- ncol(snp)
-loci <- str_replace( # expects string, pattern, replacement
-  names(snp)# returns the names of the columns
-  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
-  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
-
-#  reset the locus names
-names(snp)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
-names(snp)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
-names(snp)
-
-# rename Sample_ID column to match mhaps. so that's indiv.ID
-snp <- snp %>% 
-  rename(indiv.ID = Sample_ID)
-```
-
-Reformatting columns for mhaps:
-
-I left off here. The column names need to match the format of the SNP. I want to leave the \_hap piece on each of the haplotype loci so that it's clear which are SNPs and which are mhaps.
-
-```{r}
-# make note of the current order of loci in the data set
-nc2 <- ncol(all_mhap)
-loci2 <- str_replace( # expects string, pattern, replacement
-  names(all_mhap)# returns the names of the columns
-  [seq(2, nc2, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
-  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
-
-#  reset the locus names
-names(all_mhap)[seq(2, nc, by = 2)] <- str_c(loci2, "1", sep = ".") #put a .1 at the end of the first allele
-names(all_mhap)[seq(3, nc, by = 2)] <- str_c(loci2, "2", sep = ".") # put a .2 at the end of the second allele
-names(all_mhap)
 
 ```
 
-### 3a. Combine mhaps into genotypes
+### 2. Format/Prepare Data Frames
+#### 2a. Mhap data frames
+First, the mhap columns need to be coded properly in the adap_mhap file. They need to be hapcodes not haplotypes.
 
-We want to combine the alleles into one genotype, structured x/y. First, the mhap columns need to be coded properly.
-
-I need R to count the number of unique values for each pair of haplotypes. This should be relatively straightforward- we want R to recognize two columns with the same name (excluding haplotype.1 and haplotype.2) as the same locus.
-
-This below code works (thanks chat), but I think I need to go back and tell it to leave 0's as 0's.
+To do thi, I need R to count the number of unique values for each pair of haplotypes. This should be relatively straightforward- we want R to recognize two columns with the same name (excluding haplotype.1 and haplotype.2) as the same locus, then assign a number for each allele. 0's must remain 0's, as these represent loci that didn't amplify.
 
 ```{r}
 # Chat GPT mostly wrote this
@@ -152,10 +93,304 @@ length(unique(adap_mhap$Omy_Ch25_Six6_61287415_haplotype.2))
 length(unique(adap_code$Omy_Ch25_Six6_61287415_haplotype.2))
 ```
 
+Save this as a new csv:
 ```{r}
 write.csv(adap_code, "Data/Adaptive_genotypes_mhapcode_wide.csv", row.names = FALSE)
 ```
 
-### 3b. Combine SNPs into genotypes
 
-Ok so I didn't make a mistake- the file I loaded in was the haplotypes, but I need the hap_code file and I don't think this has been made yet.
+Next, I need to format the column names to match the neutral mhap data frame.
+I do this by renaming the neutral genotype endings so it ends in .1 and .2 to match the adaptive haplotype panel structure and snp structure.
+
+```{r}
+names(neutral_mhap) <- ifelse(
+  grepl("hap1_code$", names(neutral_mhap)),
+  sub("hap1_code$","haplotype.1", names(neutral_mhap)),
+ifelse(
+  grepl("hap2_code$", names(neutral_mhap)),
+  sub("hap2_code$","haplotype.2",names(neutral_mhap)),
+  names(neutral_mhap)
+)
+)
+
+```
+
+Combine data frames
+```{r}
+all_mhap <- merge(neutral_mhap, adap_code, by = "indiv.ID")
+```
+
+
+#### 2b. SNP data frames
+Get rid of the sex ID column in the SNP data frame.
+
+```{r}
+snp <- snp_raw %>% 
+  dplyr::select(-c(SexID,SexID.1))
+```
+
+Reformatting columns for SNPs:
+
+```{r}
+snp <- snp %>% 
+  rename_with(~ gsub(".", "_",.x, fixed = TRUE))
+# make note of the current order of loci in the data set
+nc <- ncol(snp)
+loci <- str_replace( # expects string, pattern, replacement
+  names(snp)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+#  reset the locus names
+names(snp)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
+names(snp)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
+names(snp)
+
+# rename Sample_ID column to match mhaps. so that's indiv.ID
+snp <- snp %>% 
+  rename(indiv.ID = Sample_ID)
+```
+
+
+### 3a. Combine mhaps into genotypes
+
+We want to combine the alleles into one genotype, structured x/y.
+
+```{r}
+# this creates another version of the original data frame to play with. I'm starting with just mhaps
+# Start with a new data frame based on all_mhap
+mhap_geno <- data.frame(indiv.ID = all_mhap$indiv.ID) # make sure to keep ID col
+# Find the unique base names, e.g. A from A.1 and A.2
+bases <- unique(sub("\\.[12]$", "", names(all_mhap)))
+
+for (b in bases) {
+  
+  # Get the paired column names
+  cols <- paste0(b, c(".1", ".2"))
+  
+  # Make sure both columns exist
+  if (!all(cols %in% names(all_mhap))) next
+  
+  # Combine the two columns, keeping 0
+  mhap_geno[[b]] <- paste(
+    all_mhap[[cols[1]]],
+    all_mhap[[cols[2]]],
+    sep = "/"
+  )
+}
+```
+
+The above code appears to have worked, so now I will proceed with allele dosage columns. The columns and values will be structured as follows:
+
+###4. Convert into allele dosages 
+- a unique column for each allele for each mhap. For example, if there are 7 unique mhaps at one site, then there will be 7 columns
+- Each column will be formated to end with a _a, _b, etc. 
+- The values will count the number of each alleles each individual has- for example:
+ - 1/1 will result in a value of 2 in column a
+ - 1/2 will result in a value of 1 in column a and 1 in column b
+ - 2/2 will result in a value of 2 in column b and 0 in a
+The key thing here is each mhap site should always add up to 2.
+
+For sites that didn't amplify and thus have a 0 value, I replace that value with an NA. 
+
+####4a. Mhaps -> dosages
+
+```{r}
+# modified from ChatGPT
+make_haplotype_dosage <- function(x) {
+  
+  # ----------------------------------------------------------
+  # STEP 1: Convert to character
+  # ----------------------------------------------------------
+  
+  x <- as.character(x)
+  
+  
+  # ----------------------------------------------------------
+  # STEP 2: Split each genotype into its two haplotypes
+  #
+  # Example:
+  #
+  #     "1/2" -> "1", "2"
+  #     "2/2" -> "2", "2"
+  #     "0/0" -> "0", "0"
+  # ----------------------------------------------------------
+  
+  split_haps <- strsplit(x, split = "/")
+  
+  
+  # ----------------------------------------------------------
+  # STEP 3: Identify the real haplotypes
+  #
+  # unlist() puts all haplotypes into one vector.
+  #
+  # We explicitly REMOVE "0" here because 0 means
+  # no amplification, NOT a real haplotype.
+  # ----------------------------------------------------------
+  
+  all_haps <- unlist(split_haps)
+  
+  haplotypes <- sort(
+    unique(
+      all_haps[
+        !is.na(all_haps) &
+        all_haps != "0"
+      ]
+    )
+  )
+  
+  
+  # ----------------------------------------------------------
+  # STEP 4: Create an empty matrix
+  #
+  # One row for every individual.
+  #
+  # One column for every real haplotype found at this site.
+  #
+  # We initially fill it with 0 
+  # ----------------------------------------------------------
+  
+  out <- matrix(
+    0,
+    nrow = length(x),
+    ncol = length(haplotypes)
+  )
+  
+  
+  # ----------------------------------------------------------
+  # STEP 5: Give the columns temporary names
+  # ----------------------------------------------------------
+  
+  colnames(out) <- haplotypes
+  
+  
+  # ----------------------------------------------------------
+  # STEP 6: Calculate haplotype dosage
+  # ----------------------------------------------------------
+  
+  for (j in seq_along(haplotypes)) {
+    
+    # Current haplotype
+    h <- haplotypes[j]
+    
+    
+    # Go through each individual
+    out[, j] <- sapply(split_haps, function(z) {
+      
+      
+      # ------------------------------------------------------
+      # If the genotype is missing entirely, return NA
+      # ------------------------------------------------------
+      
+      if (length(z) != 2 || any(is.na(z))) {
+        return(NA)
+      }
+      
+      
+      # ------------------------------------------------------
+      # If either haplotype is 0, the site did not amplify
+      # properly.
+      #
+      # Rather than interpreting 0 as a real allele, mark
+      # the entire site as missing.
+      # ------------------------------------------------------
+      
+      if (any(z == "0")) {
+        return(NA)
+      }
+      
+      
+      # ------------------------------------------------------
+      # Count copies of the current haplotype.
+      #
+      # 1/1 -> 2
+      # 1/2 -> 1
+      # 2/2 -> 0
+      # ------------------------------------------------------
+      
+      sum(z == h)
+    })
+  }
+  
+  
+  # ----------------------------------------------------------
+  # STEP 7: Rename the columns a, b, c, etc.
+  # ----------------------------------------------------------
+  
+  colnames(out) <- letters[seq_len(ncol(out))]
+  
+  
+  # ----------------------------------------------------------
+  # STEP 8: Return the result
+  # ----------------------------------------------------------
+  
+  return(out)
+}
+```
+
+```{r}
+# ------------------------------------------------------------
+# APPLY TO EVERY MHAP COLUMN
+# ------------------------------------------------------------
+# Get the names of all columns EXCEPT indiv.ID
+mhap_columns <- setdiff(
+  names(mhap_geno),
+  "indiv.ID"
+)
+
+
+# Process each mhap column
+result <- lapply(mhap_columns, function(site_name) {
+  
+  # Convert this mhap column into haplotype dosage columns
+  x <- make_haplotype_dosage(mhap_geno[[site_name]])
+  
+  # Add the original site name to the new column names
+  #
+  # For example:
+  #     a   b   c
+  #
+  # becomes:
+  #     site1_a   site1_b   site1_c
+  
+  colnames(x) <- paste0(
+    site_name,
+    "_",
+    colnames(x)
+  )
+  
+  return(x)
+})
+
+
+# ------------------------------------------------------------
+# COMBINE ALL NEW MHAP COLUMNS
+# ------------------------------------------------------------
+
+result <- as.data.frame(
+  do.call(cbind, result)
+)
+
+
+# ------------------------------------------------------------
+# ADD indiv.ID BACK TO THE FRONT
+# ------------------------------------------------------------
+
+result <- cbind(
+  indiv.ID = mhap_geno$indiv.ID,
+  result
+)
+
+```
+
+```{r}
+sum(is.na(result))
+```
+
+It seems that the NA values were maintained, and so I am concluding that this worked. 
+
+####4b. SNPs -> dosages 
+
+###5. Combine mhaps and snps into one data frame 
+
+The next steps, to be continued in a different file, will be to combine the 
