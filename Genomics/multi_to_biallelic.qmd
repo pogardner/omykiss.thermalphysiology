@@ -362,16 +362,12 @@ result <- lapply(mhap_columns, function(site_name) {
   return(x)
 })
 
-
 # ------------------------------------------------------------
 # COMBINE ALL NEW MHAP COLUMNS
 # ------------------------------------------------------------
-
 result <- as.data.frame(
   do.call(cbind, result)
 )
-
-
 # ------------------------------------------------------------
 # ADD indiv.ID BACK TO THE FRONT
 # ------------------------------------------------------------
@@ -390,6 +386,7 @@ sum(is.na(result))
 It seems that the NA values were maintained, and so I am concluding that this worked. 
 
 ####4b. SNPs -> dosages 
+
 
 ###5. Combine mhaps and snps into one data frame 
 

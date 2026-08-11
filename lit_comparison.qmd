@@ -1,0 +1,107 @@
+---
+title: "Lit Comparison"
+format: html
+editor: visual
+---
+
+## Literature Comparion
+
+To compare our measured upper thermal limits to those measured in other populations, I pulled literature that followed similar methods. The selected papers had to meet the following criteria:
+
+-   Use the same ramp rate (0.3°C per min)
+
+-   Juvenile (age 0-1; or 50mm-200mm FL)
+
+-   take place on the West coast of North America
+
+-   Use a similar acclimation/holding temperature (20°C +/- 2°C)
+
+I did not consider the following:
+
+-   **Holding duration:** while we know it matters (citation), the 20°C holding duration employed in our study and 2 other represented here is not a common enough method to narrow our search to this requirement.
+
+-   **Hatchery vs wild**: streamside thermal tolerance experiments are logistically challenging and don't always meet a study's needs; again, this would narrow the search too extensively to produce meaningful results
+
+-   **Rainbow trout vs steelhead:** there seems to be little to no difference between these two groups of *O. mykiss*. However, we exclude subspecies (i.e., redband trout).
+
+The following papers are included:
+
+-   Myrick, Christopher A., and Joseph J. Cech Jr. “Effects of Temperature on the Growth, Food Consumption, and Thermal Tolerance of Age-0 Nimbus-Strain Steelhead.” *North American Journal of Aquaculture* 67, no. 4 (2005): 324–30. <https://doi.org/10.1577/A04-050.1>.
+
+-   Dressler, Terra L., Kara Anlauf-Dunn, Andrea Chandler, and Erika J. Eliason. “Beyond Latitude: Thermal Tolerance and Vulnerability of a Broadly Distributed Salmonid across a Habitat Temperature Gradient.” *Conservation Physiology* 13, no. 1 (2025): coaf030. <https://doi.org/10.1093/conphys/coaf030>.
+
+-   Dressler, T. L., V. Han Lee, K. Klose, and E. J. Eliason. “Thermal Tolerance and Vulnerability to Warming Differ between Populations of Wild Oncorhynchus Mykiss near the Species’ Southern Range Limit.” *Scientific Reports* 13, no. 1 (2023): 14538. <https://doi.org/10.1038/s41598-023-41173-7>.
+
+-   Myrick, C. A., and J. J. Cech. “Temperature Influences on California Rainbow Trout Physiological Performance.” *Fish Physiology and Biochemistry* 22, no. 3 (2000): 245–54. <https://doi.org/10.1023/A:1007805322097>.
+
+-   Recsetar, Matthew S., Matthew P. Zeigler, David L. Ward, Scott A. Bonar, and Colleen A. Caldwell. “Relationship between Fish Size and Upper Thermal Tolerance.” *Transactions of the American Fisheries Society* 141, no. 6 (2012): 1433–38. <https://doi.org/10.1080/00028487.2012.694830>.
+
+## Plotting the comparison
+
+### Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(extrafont)
+```
+
+### Data
+
+```{r}
+lit <- read.csv(here("data/ctmaxlit_comparison.csv"))
+
+# get rid of row 17 (no data there)
+lit <- head(lit, -1)
+```
+
+### Plot
+
+```{r}
+fig_palette= c(
+  "Big Creek"="orange",
+  "Scott Creek"="cyan",
+  "Carmel River 2024"="#9BC53D",
+  "Carmel River 2025"="chartreuse4",
+  "Napa River"="#F991CC",
+  "Russian River" = "purple",
+  "Nimbus Hatchery"="black",
+  "Eagle Lake"="black", 
+  "Mt. Shasta Fish Hatchery"="black", 
+  "John Day River"="black",           
+  "Deschutes River"="black",         
+  "Siletz River"="black",             
+  "Umpqua River" ="black",            
+  "Piru Creek"="black",               
+  "Arroyo Seco Creek" ="black",       
+  "Arizona Hatchery"="black"   
+  )
+colnames(lit)
+lit$Watershed
+```
+
+```{r}
+lit_plot <- ggplot(lit, aes(x = RearingTemp_C, y = CTmax, color=Watershed)) +
+  geom_point(size = 3) +
+  scale_color_manual(values=fig_palette)+
+  labs(
+    x = "Maximum Rearing Temperature (°C)",
+    y = "Loss of Equilibrium Temperature (°C)"
+  ) +
+  theme_bw()+
+  theme(
+    text = element_text(family = "Times New Roman", size = 10),
+    axis.title = element_text(size = 10),
+    axis.text.x = element_text(size=10),
+    axis.text.y = element_text(size=10),
+    strip.text = element_text(size = 10),
+    panel.spacing = unit(0.4, "lines"),
+    legend.position = "none"
+  );lit_plot
+  
+
+```
+
+```{r}
+ggsave("output/lit_comparison.png", plot = lit_plot, height = 4, width = 4, dpi= 300, units = "in")
+```
