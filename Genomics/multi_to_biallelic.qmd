@@ -46,7 +46,9 @@ adap_mhap <- read.csv(here("Genomics/Data/Adaptive_haplotypes_2col_wide.csv"))
 ```
 
 ### 2. Format/Prepare Data Frames
+
 #### 2a. Mhap data frames
+
 First, the mhap columns need to be coded properly in the adap_mhap file. They need to be hapcodes not haplotypes.
 
 To do thi, I need R to count the number of unique values for each pair of haplotypes. This should be relatively straightforward- we want R to recognize two columns with the same name (excluding haplotype.1 and haplotype.2) as the same locus, then assign a number for each allele. 0's must remain 0's, as these represent loci that didn't amplify.
@@ -94,13 +96,12 @@ length(unique(adap_code$Omy_Ch25_Six6_61287415_haplotype.2))
 ```
 
 Save this as a new csv:
+
 ```{r}
 write.csv(adap_code, "Data/Adaptive_genotypes_mhapcode_wide.csv", row.names = FALSE)
 ```
 
-
-Next, I need to format the column names to match the neutral mhap data frame.
-I do this by renaming the neutral genotype endings so it ends in .1 and .2 to match the adaptive haplotype panel structure and snp structure.
+Next, I need to format the column names to match the neutral mhap data frame. I do this by renaming the neutral genotype endings so it ends in .1 and .2 to match the adaptive haplotype panel structure and snp structure.
 
 ```{r}
 names(neutral_mhap) <- ifelse(
@@ -116,12 +117,13 @@ ifelse(
 ```
 
 Combine data frames
+
 ```{r}
 all_mhap <- merge(neutral_mhap, adap_code, by = "indiv.ID")
 ```
 
-
 #### 2b. SNP data frames
+
 Get rid of the sex ID column in the SNP data frame.
 
 ```{r}
@@ -150,7 +152,6 @@ names(snp)
 snp <- snp %>% 
   rename(indiv.ID = Sample_ID)
 ```
-
 
 ### 3a. Combine mhaps into genotypes
 
@@ -182,18 +183,11 @@ for (b in bases) {
 
 The above code appears to have worked, so now I will proceed with allele dosage columns. The columns and values will be structured as follows:
 
-###4. Convert into allele dosages 
-- a unique column for each allele for each mhap. For example, if there are 7 unique mhaps at one site, then there will be 7 columns
-- Each column will be formated to end with a _a, _b, etc. 
-- The values will count the number of each alleles each individual has- for example:
- - 1/1 will result in a value of 2 in column a
- - 1/2 will result in a value of 1 in column a and 1 in column b
- - 2/2 will result in a value of 2 in column b and 0 in a
-The key thing here is each mhap site should always add up to 2.
+###4. Convert into allele dosages - a unique column for each allele for each mhap. For example, if there are 7 unique mhaps at one site, then there will be 7 columns - Each column will be formated to end with a \_a, \_b, etc. - The values will count the number of each alleles each individual has- for example: - 1/1 will result in a value of 2 in column a - 1/2 will result in a value of 1 in column a and 1 in column b - 2/2 will result in a value of 2 in column b and 0 in a The key thing here is each mhap site should always add up to 2.
 
-For sites that didn't amplify and thus have a 0 value, I replace that value with an NA. 
+For sites that didn't amplify and thus have a 0 value, I replace that value with an NA.
 
-####4a. Mhaps -> dosages
+####4a. Mhaps -\> dosages
 
 ```{r}
 # modified from ChatGPT
@@ -383,11 +377,20 @@ result <- cbind(
 sum(is.na(result))
 ```
 
-It seems that the NA values were maintained, and so I am concluding that this worked. 
+It seems that the NA values were maintained, and so I am concluding that this worked.
 
-####4b. SNPs -> dosages 
+####4b. SNPs -\> dosages
 
+###5. Combine mhaps and snps into one data frame
 
-###5. Combine mhaps and snps into one data frame 
+The current problem with the allele dosage approach is that not all loci have equal number of unique mhaps- as a result, some loci have 7 or 8 columns while others have 2. This means that they will
 
-The next steps, to be continued in a different file, will be to combine the 
+## GENESIS package
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("GENESIS")
+browseVignettes("GENESIS")
+```

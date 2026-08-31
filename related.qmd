@@ -1,0 +1,15 @@
+---
+title: "Related"
+format: html
+editor: visual
+---
+
+## related
+
+Using the package related, I will first calculate pairwise relatedness. This package can handle both bi-allelic and multi-allelic data, so that we maintain all original complexity.
+
+However, related doesn't run in new versions of R. Instead, it requires R version 4.3.3.
+
+```{r}
+install.packages("related", repos = "http://R-Forge.R-project.org")
+```

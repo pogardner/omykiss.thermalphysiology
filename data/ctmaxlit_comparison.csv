@@ -1,18 +1,18 @@
-﻿Watershed,CTmax,RearingTemp_C,HoldingTemp_C,HoldingDuration_days,MyStudy,Notes
-Nimbus Hatchery,29.6,19,19,30,N,30 day holding period; constant temp
-Eagle Lake,30,19,19,30,N,30 day holding period; constant temp; averaged between 2 years; not significantly different between study years
-Mt. Shasta Fish Hatchery,29.7,22,19-22,30,N,30 day holding period; averaged between 2 years; not significantly different between study years
-John Day River,31.22,24.9,14–27,0.83,N,max during experiments
-Deschutes River,32.06,27.1,18–22,0.83,N,max during experiments
-Siletz River,29.5,15.9,18–22,0.83,N,max during experiments
-Umpqua River,29.88,21.6,18–22,0.83,N,max during experiments
-Piru Creek,30.3,18,17-22,0.83,N,max stream temp measured during experiments
-Arroyo Seco Creek,29.8,22,17-21,0.83,N,max stream temp measured during study duration
-Arizona Hatchery,31.2,18,18,14,N,held at 18C for 14 days
-Russian River,31.26,19.89,20,0.83,Y,7DADM
-Napa River,31.3,21.4,20,0.83,Y,7DADM
-Carmel River 2024,30.9,16.33,20,0.83,Y,7DADM
-Carmel River 2025,31.5,21.81,20,0.83,Y,7DADM
-Big Creek,30.92,17.63,20,0.83,Y,average 7DADM between 2 years
-Scott Creek,31.09,20.86,20,0.83,Y,average 7DADM between 2 years
-,,,,,,
+﻿Watershed,CTmax,RearingTemp_C,HoldingTemp_C,HoldingDuration_days,Latitude,MyStudy,Wild,Notes
+Nimbus Hatchery,29.6,19,19,30,38.633,N,N,30 day holding period; constant temp
+Eagle Lake,30,19,19,30,40.665,N,N,30 day holding period; constant temp; averaged between 2 years; not significantly different between study years
+Mt. Shasta Fish Hatchery,29.7,22,19-22,30,41.305,N,N,30 day holding period; averaged between 2 years; not significantly different between study years
+John Day River,31.22,24.9,14–27,0.83,,N,Y,max during experiments
+Deschutes River,32.06,27.1,18–22,0.83,,N,Y,max during experiments
+Siletz River,29.5,15.9,18–22,0.83,,N,Y,max during experiments
+Umpqua River,29.88,21.6,18–22,0.83,,N,Y,max during experiments
+Piru Creek,30.3,18,17-22,0.83,,N,Y,max stream temp measured during experiments
+Arroyo Seco Creek,29.8,22,17-21,0.83,,N,Y,max stream temp measured during study duration
+Arizona Hatchery,31.2,18,18,14,,N,Y,held at 18C for 14 days
+Russian River,31.26,19.89,20,0.83,,Y,Y,7DADM
+Napa River,31.3,21.4,20,0.83,,Y,Y,7DADM
+Carmel River 2024,30.9,16.33,20,0.83,,Y,Y,7DADM
+Carmel River 2025,31.5,21.81,20,0.83,,Y,Y,7DADM
+Big Creek,30.92,17.63,20,0.83,,Y,Y,average 7DADM between 2 years
+Scott Creek,31.09,20.86,20,0.83,,Y,Y,average 7DADM between 2 years
+,,,,,,,,
