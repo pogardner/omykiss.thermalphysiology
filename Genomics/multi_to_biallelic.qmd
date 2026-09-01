@@ -51,7 +51,7 @@ adap_mhap <- read.csv(here("Genomics/Data/Adaptive_haplotypes_2col_wide.csv"))
 
 First, the mhap columns need to be coded properly in the adap_mhap file. They need to be hapcodes not haplotypes.
 
-To do thi, I need R to count the number of unique values for each pair of haplotypes. This should be relatively straightforward- we want R to recognize two columns with the same name (excluding haplotype.1 and haplotype.2) as the same locus, then assign a number for each allele. 0's must remain 0's, as these represent loci that didn't amplify.
+To do this, I need R to count the number of unique values for each pair of haplotypes. This should be relatively straightforward- we want R to recognize two columns with the same name (excluding haplotype.1 and haplotype.2) as the same locus, then assign a number for each allele. 0's must remain 0's, as these represent loci that didn't amplify.
 
 ```{r}
 # Chat GPT mostly wrote this

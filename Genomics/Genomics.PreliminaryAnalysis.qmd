@@ -285,7 +285,7 @@ ex1_FS_is
 The tutorial for CKMRsim recommends requiring that the FPR (false positive rate) be about 10-100 times smaller than the reciprocal of the number of comparisons. In this case, thats
 
 ```{r}
-0.1*(494*494) ^-1
+0.1*((494*493)/2) ^-1
 ```
 
 ```{r}
@@ -372,6 +372,8 @@ fs_pairwise_logls12 <- fs_pairwise_logls %>%
 ```{r}
 write.csv(fs_pairwise_logls12,"Data/snps_fs_pairwise_logls12.csv")
 ```
+
+
 
 ## 3. Visualize CKMRsim output
 
@@ -506,6 +508,7 @@ ckmr2 <- create_ckmr(
 
 ckmr2
 ```
+
 #### Simulate genotype pairs + calculate log-probabilities
 
 ```{r}
@@ -517,8 +520,15 @@ ex1_Qs2
 mhap_snp_PO_is_8_12 <- mc_sample_simple(ex1_Qs2, 
                  nu = "FS",
                  de = "U")
-ex1_PO_is_8_12
+
+ex1_PO_is_8_12_2 <- mc_sample_simple(ex1_Qs2, 
+                 nu = "FS",
+                 de = "U", 
+                 lambda_stars = seq(12, 15, by = .1))
+
+ex1_PO_is_8_12_2
 ```
+
 #### Compute log-likelihood ratios to view them
 
 ```{r}
@@ -527,6 +537,7 @@ FS_U_logls2 <- extract_logls(ex1_Qs2,
                             denom = c(U = 1))
 FS_U_logls2
 ```
+
 Visualize this in ggplot.
 
 ```{r}
@@ -534,11 +545,13 @@ ggplot(FS_U_logls2,
             aes(x = logl_ratio, fill = true_relat)) +
   geom_density(alpha = 0.25)
 ```
+
 ```{r}
 ggplot(FS_U_logls2 %>% filter(true_relat %in% c("FS", "U")),
             aes(x = logl_ratio, fill = true_relat)) +
   geom_density(alpha = 0.25)
 ```
+
 *Consider checking for matchers again with the two dataframes combined.*
 
 ```{r}
@@ -550,7 +563,7 @@ fs_pairwise_logls2 <- pairwise_kin_logl_ratios(D1 = mhap_snp,
                                               num_cores = 1)
 
 fs_pairwise_logls12_mhap_snp <- fs_pairwise_logls2 %>%
-  filter(logl_ratio > 12) %>%
+  filter(logl_ratio > 15) %>%
   arrange(desc(logl_ratio))
 
 fs_pairwise_logls_mhap_snp <- fs_pairwise_logls2 %>%
@@ -568,8 +581,288 @@ ex1_PO_is_8_12 %>%
   arrange(FPR) %>%
   slice(1)
 ```
+
 I think something strange happened here- I found 2.5X full sibs that I found in the snp analysis alone. I would have expected less, I think.
 
-PICKING UP
-Why are there more full-sibs found in the new dataframe compared to the old?
-Maybe 12 is wrong?
+PICKING UP Why are there more full-sibs found in the new dataframe compared to the old? Maybe 12 is wrong?
+
+
+## 5. ALL Data in CKMRsim 
+
+I've now done the CKMRsim analyses using SNP and SNP + neutral mhaps. Lastly, I'll add in the adaptive mhaps.
+
+There are 5 mhap markers associated with Omy05 and 2-3 SNPs. We will want to omit eventually all but 2-3 of these to avoid pseudo replication.
+
+```{r}
+# Read in adaptive panel csv
+adap_mhap <- read.csv(here("Genomics/Data/Adaptive_genotypes_mhapcode_wide.csv"))
+length(unique(adap_mhap))
+
+# Just noticing that a lot of this data frame is 1 and 2 - I guess this kind of makes sense? No major changes in the major adaptive regions
+```
+
+Clean the csv by filtering out the same individuals as above and merge it with the other data frame.
+
+```{r}
+adap_mhap_filtered <- adap_mhap %>% 
+  rename(Indiv = indiv.ID) %>% # rename indiv column to match
+  filter(!Indiv %in% c("M145767","M145542", # matching indivs from scott creek and big creek
+                       "M145524", "M145692"))
+```
+
+
+### Prepare the data frame
+```{r}
+nc <- ncol(adap_mhap_filtered)
+loci <- str_replace( # expects string, pattern, replacement
+  names(adap_mhap_filtered)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+
+# long format
+long_adap_mhap <- adap_mhap_filtered %>% 
+  gather(
+    key = "loc", 
+    value = "Allele",
+    -Indiv
+  ) %>%
+  separate(
+    loc,
+    into = c("Locus", "gene_copy"),
+    sep = "\\.(?=[^.]+$)" # chat wrote this section
+  ) %>%
+  mutate(
+    Allele = as.character(Allele),
+    Allele = ifelse(Allele == "0", NA, Allele)
+  )
+
+# this seems to have worked, but could probably use a sanity check (chat helped trouble shoot it)
+```
+
+### Combine long data frames and Calculate allele frequencies
+
+```{r}
+all_data_long <- bind_rows(mhap_snp, long_adap_mhap)
+```
+
+#### Calculate allele freqs
+
+```{r}
+alle_freqs_all<- all_data_long %>%
+  count(Locus,Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA, # leave this as NA
+         LocIdx = NA) %>% # leave this as NA
+  filter(!is.na(Allele)) # removing NA's is really important in this step!
+
+# see what that looks like:
+alle_freqs_all
+```
+
+Make a CKRMsim object
+
+```{r}
+afreqs_ready_all <- reindex_markers(alle_freqs_all)
+```
+
+#### Create CKRMsim object
+
+```{r}
+ckmr_all <- create_ckmr(
+  D = afreqs_ready_all,
+  kappa_matrix = kappas[c("PO", "FS", "HS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE, # function describes genotyping error model applied to model for computing likelihoods. TGIE is for integers
+  ge_mod_true = ge_model_TGIE, # genotyping error model to simulate genotype data
+  ge_mod_assumed_pars_list = list(epsilon = 0.005), # named parameters for assumed genotyping error model (can leave blank and use defaults)
+  ge_mod_true_pars_list = list(epsilon = 0.005) # for true genotyping error
+)
+
+ckmr_all
+```
+
+
+#### Simulate genotype pairs + calculate log-probabilities
+
+```{r}
+sim_all <- simulate_Qij(ckmr_all, 
+                       calc_relats = c("PO", "FS", "U"),
+                       sim_relats = c("PO", "FS", "HS", "U") )
+sim_all
+
+ALL_PO_is_8_12 <- mc_sample_simple(sim_all,
+                 nu = "FS",
+                 de = "U")
+ALL_PO_is_8_12
+
+sim_all_FPR <- mc_sample_simple(sim_all, 
+                 nu = "FS",
+                 de = "U", 
+                 lambda_stars = seq(12, 25, by = .1))
+```
+#### Compute log-likelihood ratios to view them
+
+```{r}
+FS_U_logls_ALL <- extract_logls(sim_all,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+FS_U_logls_ALL
+```
+
+Visualize this in ggplot.
+
+```{r}
+ggplot(FS_U_logls_ALL,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+### Check for number of full sib pairs
+```{r}
+fs_pairwise_logls_ALL <- pairwise_kin_logl_ratios(D1 = all_data_long,
+                                              D2 = all_data_long,
+                                              CK = ckmr_all,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+FS_FPR_is <- mc_sample_simple(sim_all, 
+                 nu = "FS",
+                 de = "U")
+
+FS_FPR_is
+
+FS_FPR_is %>%
+  filter(FPR > 8.2e-07) %>%
+  arrange(FPR) %>%
+  slice(1)
+
+fs_pairwise_logls_ALL <- fs_pairwise_logls_ALL %>%
+  filter(logl_ratio > 20) %>%
+  arrange(desc(logl_ratio))
+```
+
+Use a lambda star of 18 (uncertain here). There are only 5 rows, and all rows comply with using a lambda of 18. I think this indicates that we have really good power. 
+
+
+```{r}
+.1*((494*493)/2)^-1
+```
+
+# 6. Visualization of Data
+
+I am going to make a pairwise plot that compares individuals to one another, but sorts by location and year, using logLR >18.
+
+First, I need to add in metadata to each individual. 
+
+```{r}
+# rename indiv columns
+pairwise_sibs <- fs_pairwise_logls_ALL %>% 
+  rename(indiv_1 = D1_indiv,
+         indiv_2 = D2_indiv)
+
+# clean ctmax dataframe
+ctmax_clean <- ctmax %>% 
+  mutate(COLLECTION_DATE = mdy(COLLECTION_DATE)) %>% 
+  mutate(YEAR = year(COLLECTION_DATE))
+
+# two merges:
+pairwise_sibsmerge1 <- pairwise_sibs %>% 
+  left_join(ctmax_clean %>% 
+              dplyr::select(NMFS_DNA_ID, WATERSHED, YEAR) %>%
+              rename(watershed_1 = WATERSHED,
+                     year_1 = YEAR,
+                     indiv_1 = NMFS_DNA_ID),
+            by = "indiv_1")
+
+#merge 2
+pairwise_sibsmerged <- pairwise_sibsmerge1 %>% 
+  left_join(ctmax_clean %>% 
+              dplyr::select(NMFS_DNA_ID, WATERSHED, YEAR) %>%
+              rename(watershed_2 = WATERSHED,
+                     year_2 = YEAR,
+                     indiv_2 = NMFS_DNA_ID),
+            by = "indiv_2")
+```
+
+
+I think we should only retain individuals that are FS. So where logLR >18.
+```{r}
+filtered_sibs <- pairwise_sibsmerged %>%
+  filter(logl_ratio > 12) %>%
+  arrange(desc(logl_ratio))
+
+# pairwise relatedness column
+pairwise_sibsmerged <- pairwise_sibsmerged %>%
+  mutate(
+    comparison = case_when(
+      watershed_1 == watershed_2 ~ "Within location",
+      TRUE ~ "Between locations"
+    )
+  )
+
+
+# Get all individuals and order them by location and year
+individuals <- ctmax_clean %>% 
+  arrange(WATERSHED, YEAR, NMFS_DNA_ID)
+
+# this is where I left off
+
+matrix_data <- individuals %>%
+  select(ID1 = ID, location1 = location, year1 = study_year, order1 = order) %>%
+  inner_join(
+    individuals %>%
+      select(ID2 = ID, location2 = location, year2 = study_year, order2 = order),
+    by = character()
+  ) %>%
+  filter(location1 == location2)
+
+ggplot(matrix_data, aes(x = order1, y = order2, fill = relatedness)) +
+  geom_tile() +
+  geom_abline(
+    slope = 1,
+    intercept = 0,
+    linewidth = 0.5
+  ) +
+  scale_fill_viridis_c(
+    name = "Genetic\nrelatedness",
+    na.value = "white"
+  ) +
+  scale_x_continuous(
+    breaks = individuals$order,
+    labels = individuals$ID,
+    expand = c(0, 0)
+  ) +
+  scale_y_continuous(
+    breaks = individuals$order,
+    labels = individuals$ID,
+    expand = c(0, 0)
+  ) +
+  coord_equal() +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(
+      angle = 90,
+      hjust = 1,
+      vjust = 0.5
+    ),
+    axis.title = element_blank(),
+    panel.grid = element_blank()
+  )
+```
+
+
+```{r}
+
+```
+
+
+
+
+
+
