@@ -1,0 +1,135 @@
+---
+title: "CKMRsim: A Population level analysis"
+format: pdf
+editor: visual
+---
+
+## CKMRsim: A Population level analysis
+
+The last ckmr script analysed the whole data set at once. While this didn't initially appear to be a problem, we want to assume that each population is isolated from one another. As a result, we need to run ckmr again on each population.
+
+1.  Load in libraries and data
+2.  Create new data frames for each watershed/population
+3.  Attempt to convert the different ckmr code chunks and steps into functions
+4.  Apply functions (if successful) to each population
+
+## 1. Prep library and data
+
+```{r}
+#| echo: false
+library(tidyverse) 
+library(MCMCpack) # for animal model
+library(ggplot2) # plots
+library(here) # easy data file access for Git
+library(CKMRsim)
+```
+
+```{r}
+# Phenotype and metadata
+ctmax <- read.csv(here("Genomics/Data/Omy5_inversion_metadata_merge.csv"))
+
+# SNP data -------------------------------------------------------------------
+# Data received 7/2/26
+snp <- read.csv(here("Genomics/Data/PaigeAdapCapFishSNPGenotypes.raw.csv"))
+# extract first 7 characters into column with the same name as the ctmax dataframe
+str(snp$Sample_ID)
+snp$indiv.ID <- substr(snp$Sample_ID,1,7)
+# remove original sample_ID column
+snp <- snp %>% 
+  dplyr::select(-Sample_ID)
+snp <- snp %>% relocate(last_col())
+
+### rename the columns ----------------------
+# make the periods be _ for the next steps.
+snp <- snp %>% 
+  rename_with(~ gsub(".", "_",.x, fixed = TRUE))
+# make note of the current order of loci in the data set
+nc <- ncol(snp)
+loci <- str_replace( # expects string, pattern, replacement
+  names(snp)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+#  reset the locus names
+names(snp)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
+names(snp)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
+names(snp)
+snp <- snp %>% 
+  rename(indiv.ID = indiv_ID)
+
+
+# MHap data----------------------------------------------------------------------
+## Neutral
+neutral_mhap <- read.csv(here("Genomics/Data/Neutral_genotypes_mhapcode_wide.csv"))
+nc <- ncol(neutral_mhap)
+loci <- str_replace( # expects string, pattern, replacement
+  names(neutral_mhap)# returns the names of the columns
+  [seq(2, nc, by = 2)], # creates a sequence of even numbers starting at 2 and ending at nc, stepping by 2
+  "\\.\\.\\.[0-9]+$", "") # this cleans up column names. So I don't think this will impact my dataframe at all
+
+#  reset the locus names
+names(neutral_mhap)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
+names(neutral_mhap)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
+names(neutral_mhap)
+
+
+## Adaptive
+adap_mhap <- read.csv(here("Genomics/Data/Adaptive_genotypes_mhapcode_wide.csv"))
+
+```
+
+Merge the SNP, adaptive, and neutral mhap data frames.
+
+```{r}
+merged1 <- merge(adap_mhap,neutral_mhap, by = "indiv.ID") 
+fullmerge <- merge(snp, merged1, by = "indiv.ID")
+```
+
+Save the above data frame for easy access in the repository:
+
+```{r}
+write.csv(fullmerge, "Data/merged_ALLgenetics_codewide.csv", row.names = FALSE)
+```
+
+Filter out individuals pre-identified in Genomics.PreliminaryAnalysis, the SexId columns. Eventually, we will only want to keep two (ish) of the Omy columns in the adap_mhap data frame.
+
+```{r}
+all <-  fullmerge %>% 
+  filter(!indiv.ID %in% c("M145767","M145542", # matching indivs from scott creek and big creek
+                       "M145524", "M145692")) %>% 
+  dplyr::select(-c(SexID.1,SexID.2))
+```
+
+Merge location data from the metadata file with the above data file.
+
+```{r}
+populations <- ctmax %>% 
+  rename(indiv.ID = NMFS_DNA_ID_use) %>% 
+   filter(!indiv.ID %in% c("M145767","M145542", 
+                       "M145524", "M145692")) %>% 
+  dplyr::select(c(indiv.ID,WATERSHED)) %>% 
+  left_join(., all, by ="indiv.ID")
+```
+
+## 2. Separate Data Frames for Each Population
+
+```{r}
+bigcreek <- populations %>% 
+  filter(WATERSHED == "Big Creek")
+
+scottcreek <- populations %>% 
+  filter(WATERSHED == "Scott Creek")
+
+carmelriver <- populations %>% 
+  filter(WATERSHED == "Carmel River")
+
+napariver <- populations %>% 
+  filter(WATERSHED == "Napa River")
+
+russianriver <- populations %>% 
+  filter(WATERSHED == "Russian River")
+```
+
+## 3. CKMR functions
+
+This is where I'm going to leave off for the day. Next, I will try to convert the CKMR code chunks into functions that can be easily applied to each location for ease of replication and consistency.
