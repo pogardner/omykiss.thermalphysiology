@@ -1,6 +1,7 @@
 ---
 title: "CKMRsim: A Population level analysis"
 format: pdf
+author: Paige Gardner, UC Santa Cruz pogardne@ucsc.edu
 editor: visual
 ---
 
@@ -10,13 +11,12 @@ The last ckmr script analysed the whole data set at once. While this didn't init
 
 1.  Load in libraries and data
 2.  Create new data frames for each watershed/population
-3.  Attempt to convert the different ckmr code chunks and steps into functions
-4.  Apply functions (if successful) to each population
+3.  Run CKMR code on each population.
 
 ## 1. Prep library and data
 
 ```{r}
-#| echo: false
+#| output: false
 library(tidyverse) 
 library(MCMCpack) # for animal model
 library(ggplot2) # plots
@@ -25,6 +25,8 @@ library(CKMRsim)
 ```
 
 ```{r}
+#| output: false
+
 # Phenotype and metadata
 ctmax <- read.csv(here("Genomics/Data/Omy5_inversion_metadata_merge.csv"))
 
@@ -53,7 +55,6 @@ loci <- str_replace( # expects string, pattern, replacement
 #  reset the locus names
 names(snp)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
 names(snp)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
-names(snp)
 snp <- snp %>% 
   rename(indiv.ID = indiv_ID)
 
@@ -70,7 +71,6 @@ loci <- str_replace( # expects string, pattern, replacement
 #  reset the locus names
 names(neutral_mhap)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
 names(neutral_mhap)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
-names(neutral_mhap)
 
 
 ## Adaptive
@@ -115,21 +115,534 @@ populations <- ctmax %>%
 
 ```{r}
 bigcreek <- populations %>% 
-  filter(WATERSHED == "Big Creek")
+  filter(WATERSHED == "Big Creek") %>% 
+  dplyr::select(-WATERSHED)
 
 scottcreek <- populations %>% 
-  filter(WATERSHED == "Scott Creek")
+  filter(WATERSHED == "Scott Creek")%>% 
+  dplyr::select(-WATERSHED)
 
 carmelriver <- populations %>% 
-  filter(WATERSHED == "Carmel River")
+  filter(WATERSHED == "Carmel River")%>% 
+  dplyr::select(-WATERSHED)
 
 napariver <- populations %>% 
-  filter(WATERSHED == "Napa River")
+  filter(WATERSHED == "Napa River")%>% 
+  dplyr::select(-WATERSHED)
 
 russianriver <- populations %>% 
-  filter(WATERSHED == "Russian River")
+  filter(WATERSHED == "Russian River")%>% 
+  dplyr::select(-WATERSHED)
 ```
 
-## 3. CKMR functions
+## 3a) Big Sur
 
-This is where I'm going to leave off for the day. Next, I will try to convert the CKMR code chunks into functions that can be easily applied to each location for ease of replication and consistency.
+```{r}
+# make note of the current order of loci in the data set
+nc <- ncol(bigcreek)
+loci <- str_replace(names(bigcreek)[seq(2, nc, by = 2)], "\\.1$", "")
+# then make some long format genotypes
+long_genos <- bigcreek %>% 
+  gather(key = "loc", value = "Allele", -indiv.ID) %>%
+   extract( # ChatGPT helped me with this code chunk. had to adapt from CKMR tutorial bc some of the gene names have other . in them
+    loc,
+    into = c("Locus", "gene_copy"),
+    regex = "^(.*)\\.([12])$"
+  ) %>%
+  mutate(Allele = as.character(Allele)) %>%
+  mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
+  rename(Indiv = indiv.ID)
+
+```
+
+Compute allele frequencies.
+
+```{r}
+alle_freqs <- long_genos %>%
+  count(Locus, Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA,
+         LocIdx = NA) %>%
+  filter(!is.na(Allele))
+
+# see what that looks like:
+alle_freqs
+```
+
+Reindex the data allele frequency data frame so that ckmr can use it
+
+```{r}
+afreqs_ready <- reindex_markers(alle_freqs)
+```
+
+**Create a ckmr object**
+
+```{r}
+bigcreek_ckmr <- create_ckmr(
+  D = afreqs_ready,
+  kappa_matrix = kappas[c("FS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE,
+  ge_mod_true = ge_model_TGIE,
+  ge_mod_assumed_pars_list = list(epsilon = 0.005),
+  ge_mod_true_pars_list = list(epsilon = 0.005)
+)
+bigcreek_ckmr
+```
+
+**Simulate genotype pairs and calculate their log probabilities.**
+
+```{r}
+bigcreek_Qs <- simulate_Qij(bigcreek_ckmr, 
+                       calc_relats = c("FS", "U"),
+                       sim_relats = c("FS",  "U") )
+bigcreek_Qs
+```
+
+**Compute log-likelihood ratios to view them**
+
+```{r}
+bigcreek_FS_U_logls <- extract_logls(bigcreek_Qs,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+
+bigcreek_FS_U_logls
+```
+
+**Visualize**
+
+```{r}
+ggplot(bigcreek_FS_U_logls,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+
+**Estimating FPR**
+
+```{r}
+bigcreek_FS_is <- mc_sample_simple(bigcreek_Qs, 
+                 nu = "FS",
+                 de = "U")
+
+bigcreek_FS_is
+
+FPR_results <- mc_sample_simple(
+  bigcreek_Qs,
+  nu = "FS",
+  de = "U",
+  lambda_stars = seq(5, 20, by = 0.1)
+)
+```
+
+#### How many comparisons? Setting acceptable FPR
+
+127 individuals
+
+```{r}
+0.1*((127*126)/2)^-1
+```
+
+## Setting logLR
+
+Logl ratio that gives largest FPR smaller than 1.249 e-5:
+
+```{r}
+bigcreek_FS_is %>%
+  filter(FPR > 1.249844e-05) %>%
+  arrange(FPR) %>%
+  slice(1)
+```
+
+Seems like we can set logLR to 18, but this is unclear.
+
+**Check for matchers.**
+
+```{r}
+matchers <- find_close_matching_genotypes(LG = long_genos,
+                                          CK = bigcreek_ckmr,
+                                          max_mismatch = 6)
+
+matchers
+```
+
+None!
+
+Compute LogLR for all pairwise comparisons.
+
+```{r}
+# Full sib pairs
+bigcreek_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
+                                              D2 = long_genos,
+                                              CK = bigcreek_ckmr,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+
+
+# note, num_cores is set to 1 because more than that breaks
+# it on CRAN checks.  But, leave it blank (i.e., don't use the
+# num_core option) to, by default, use all
+# your cores in parallel on a non-windows machine.
+```
+
+```{r}
+bigcreek_fs_pairwise_logls %>%
+  filter(logl_ratio > 18) %>%
+  arrange(desc(logl_ratio))
+
+bigcreek_FS_is %>%
+  arrange(Lambda_star) %>%
+  dplyr::select(Lambda_star, FPR) 
+```
+
+## 3b) Scott Creek
+
+```{r}
+nc <- ncol(scottcreek)
+loci <- str_replace(names(scottcreek)[seq(2, nc, by = 2)], "\\.1$", "")
+# then make some long format genotypes
+long_genos <- scottcreek %>% 
+  gather(key = "loc", value = "Allele", -indiv.ID) %>%
+   extract( # ChatGPT helped me with this code chunk. had to adapt from CKMR tutorial bc some of the gene names have other . in them
+    loc,
+    into = c("Locus", "gene_copy"),
+    regex = "^(.*)\\.([12])$"
+  ) %>%
+  mutate(Allele = as.character(Allele)) %>%
+  mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
+  rename(Indiv = indiv.ID)
+```
+
+Compute allele frequencies.
+
+```{r}
+alle_freqs <- long_genos %>%
+  count(Locus, Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA,
+         LocIdx = NA) %>%
+  filter(!is.na(Allele))
+
+# see what that looks like:
+alle_freqs
+```
+
+Reindex the data allele frequency data frame so that ckmr can use it
+
+```{r}
+afreqs_ready <- reindex_markers(alle_freqs)
+```
+
+**Create a ckmr object**
+
+```{r}
+scottcreek_ckmr <- create_ckmr(
+  D = afreqs_ready,
+  kappa_matrix = kappas[c("FS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE,
+  ge_mod_true = ge_model_TGIE,
+  ge_mod_assumed_pars_list = list(epsilon = 0.005),
+  ge_mod_true_pars_list = list(epsilon = 0.005)
+)
+scottcreek_ckmr
+```
+
+**Simulate genotype pairs and calculate their log probabilities.**
+
+```{r}
+scottcreek_Qs <- simulate_Qij(scottcreek_ckmr, 
+                       calc_relats = c("FS", "U"),
+                       sim_relats = c("FS",  "U") )
+scottcreek_Qs
+```
+
+**Compute log-likelihood ratios to view them**
+
+```{r}
+scottcreek_FS_U_logls <- extract_logls(scottcreek_Qs,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+
+scottcreek_FS_U_logls
+```
+
+**Visualize**
+
+```{r}
+ggplot(scottcreek_FS_U_logls,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+
+## 3c) Carmel River
+
+```{r}
+# make note of the current order of loci in the data set
+nc <- ncol(carmelriver)
+loci <- str_replace(names(carmelriver)[seq(2, nc, by = 2)], "\\.1$", "")
+# then make some long format genotypes
+long_genos <- carmelriver %>% 
+  gather(key = "loc", value = "Allele", -indiv.ID) %>%
+   extract( # ChatGPT helped me with this code chunk. had to adapt from CKMR tutorial bc some of the gene names have other . in them
+    loc,
+    into = c("Locus", "gene_copy"),
+    regex = "^(.*)\\.([12])$"
+  ) %>%
+  mutate(Allele = as.character(Allele)) %>%
+  mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
+  rename(Indiv = indiv.ID)
+
+```
+
+Compute allele frequencies.
+
+```{r}
+alle_freqs <- long_genos %>%
+  count(Locus, Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA,
+         LocIdx = NA) %>%
+  filter(!is.na(Allele))
+
+# see what that looks like:
+alle_freqs
+```
+
+Reindex the data allele frequency data frame so that ckmr can use it
+
+```{r}
+afreqs_ready <- reindex_markers(alle_freqs)
+```
+
+**Create a ckmr object**
+
+```{r}
+carmelriver_ckmr <- create_ckmr(
+  D = afreqs_ready,
+  kappa_matrix = kappas[c("FS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE,
+  ge_mod_true = ge_model_TGIE,
+  ge_mod_assumed_pars_list = list(epsilon = 0.005),
+  ge_mod_true_pars_list = list(epsilon = 0.005)
+)
+carmelriver_ckmr
+```
+
+**Simulate genotype pairs and calculate their log probabilities.**
+
+```{r}
+carmelriver_Qs <- simulate_Qij(carmelriver_ckmr, 
+                       calc_relats = c("FS", "U"),
+                       sim_relats = c("FS",  "U") )
+carmelriver_Qs
+```
+
+**Compute log-likelihood ratios to view them**
+
+```{r}
+carmelriver_FS_U_logls <- extract_logls(carmelriver_Qs,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+
+carmelriver_FS_U_logls
+```
+
+**Visualize**
+
+```{r}
+ggplot(carmelriver_FS_U_logls,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+
+## 3d) Napa River
+
+```{r}
+# make note of the current order of loci in the data set
+nc <- ncol(napariver)
+loci <- str_replace(names(napariver)[seq(2, nc, by = 2)], "\\.1$", "")
+# then make some long format genotypes
+long_genos <- napariver %>% 
+  gather(key = "loc", value = "Allele", -indiv.ID) %>%
+   extract( # ChatGPT helped me with this code chunk. had to adapt from CKMR tutorial bc some of the gene names have other . in them
+    loc,
+    into = c("Locus", "gene_copy"),
+    regex = "^(.*)\\.([12])$"
+  ) %>%
+  mutate(Allele = as.character(Allele)) %>%
+  mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
+  rename(Indiv = indiv.ID)
+
+```
+
+Compute allele frequencies.
+
+```{r}
+alle_freqs <- long_genos %>%
+  count(Locus, Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA,
+         LocIdx = NA) %>%
+  filter(!is.na(Allele))
+
+# see what that looks like:
+alle_freqs
+```
+
+Reindex the data allele frequency data frame so that ckmr can use it
+
+```{r}
+afreqs_ready <- reindex_markers(alle_freqs)
+```
+
+**Create a ckmr object**
+
+```{r}
+napariver_ckmr <- create_ckmr(
+  D = afreqs_ready,
+  kappa_matrix = kappas[c("FS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE,
+  ge_mod_true = ge_model_TGIE,
+  ge_mod_assumed_pars_list = list(epsilon = 0.005),
+  ge_mod_true_pars_list = list(epsilon = 0.005)
+)
+napariver_ckmr
+```
+
+**Simulate genotype pairs and calculate their log probabilities.**
+
+```{r}
+napariver_Qs <- simulate_Qij(napariver_ckmr, 
+                       calc_relats = c("FS", "U"),
+                       sim_relats = c("FS",  "U") )
+napariver_Qs
+```
+
+**Compute log-likelihood ratios to view them**
+
+```{r}
+napariver_FS_U_logls <- extract_logls(napariver_Qs,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+
+napariver_FS_U_logls
+```
+
+**Visualize**
+
+```{r}
+ggplot(napariver_FS_U_logls,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+
+## 3e) Russian River
+
+```{r}
+# make note of the current order of loci in the data set
+nc <- ncol(russianriver)
+loci <- str_replace(names(russianriver)[seq(2, nc, by = 2)], "\\.1$", "")
+# then make some long format genotypes
+long_genos <- russianriver %>% 
+  gather(key = "loc", value = "Allele", -indiv.ID) %>%
+   extract( # ChatGPT helped me with this code chunk. had to adapt from CKMR tutorial bc some of the gene names have other . in them
+    loc,
+    into = c("Locus", "gene_copy"),
+    regex = "^(.*)\\.([12])$"
+  ) %>%
+  mutate(Allele = as.character(Allele)) %>%
+  mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
+  rename(Indiv = indiv.ID)
+
+```
+
+Compute allele frequencies.
+
+```{r}
+alle_freqs <- long_genos %>%
+  count(Locus, Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA,
+         LocIdx = NA) %>%
+  filter(!is.na(Allele))
+
+# see what that looks like:
+alle_freqs
+```
+
+Reindex the data allele frequency data frame so that ckmr can use it
+
+```{r}
+afreqs_ready <- reindex_markers(alle_freqs)
+```
+
+**Create a ckmr object**
+
+```{r}
+russianriver_ckmr <- create_ckmr(
+  D = afreqs_ready,
+  kappa_matrix = kappas[c("FS", "U"), ],
+  ge_mod_assumed = ge_model_TGIE,
+  ge_mod_true = ge_model_TGIE,
+  ge_mod_assumed_pars_list = list(epsilon = 0.005),
+  ge_mod_true_pars_list = list(epsilon = 0.005)
+)
+russianriver_ckmr
+```
+
+**Simulate genotype pairs and calculate their log probabilities.**
+
+```{r}
+russianriver_Qs <- simulate_Qij(russianriver_ckmr, 
+                       calc_relats = c("FS", "U"),
+                       sim_relats = c("FS",  "U") )
+russianriver_Qs
+```
+
+**Compute log-likelihood ratios to view them**
+
+```{r}
+russianriver_FS_U_logls <- extract_logls(russianriver_Qs,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+
+russianriver_FS_U_logls
+```
+
+**Visualize**
+
+```{r}
+ggplot(russianriver_FS_U_logls,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
