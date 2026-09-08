@@ -71,9 +71,6 @@ loci <- str_replace( # expects string, pattern, replacement
 #  reset the locus names
 names(neutral_mhap)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1 at the end of the first allele
 names(neutral_mhap)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
-
-
-
 ```
 
 ### Important filtering from adaptive panel
@@ -138,7 +135,7 @@ fullmerge <- merge(snp, merged1, by = "indiv.ID")
 Save the above data frame for easy access in the repository:
 
 ```{r}
-write.csv(fullmerge, "Data/merged_ALLgenetics_codewide.csv", row.names = FALSE)
+write.csv(fullmerge, "Data/merged_TRIMMEDgenetics_codewide.csv", row.names = FALSE)
 ```
 
 Filter out individuals pre-identified in Genomics.PreliminaryAnalysis, the SexId columns. Eventually, we will only want to keep two (ish) of the Omy columns in the adap_mhap data frame.
@@ -513,9 +510,9 @@ Compute LogLR for all pairwise comparisons.
 
 ```{r}
 # Full sib pairs
-bigcreek_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
+scottcreek_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
                                               D2 = long_genos,
-                                              CK = bigcreek_ckmr,
+                                              CK = scottcreek_ckmr,
                                               numer = "FS",
                                               denom = "U", 
                                               num_cores = 1)
@@ -529,11 +526,11 @@ bigcreek_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
 ```
 
 ```{r}
-bigcreek_fs_pairwise_logls %>%
+scottcreek_fs_pairwise_logls %>%
   filter(logl_ratio > 18) %>%
   arrange(desc(logl_ratio))
 
-bigcreek_FS_is %>%
+scottcreek_FS_is %>%
   arrange(Lambda_star) %>%
   dplyr::select(Lambda_star, FPR) 
 ```
