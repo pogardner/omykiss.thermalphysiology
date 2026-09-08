@@ -73,15 +73,65 @@ names(neutral_mhap)[seq(2, nc, by = 2)] <- str_c(loci, "1", sep = ".") #put a .1
 names(neutral_mhap)[seq(3, nc, by = 2)] <- str_c(loci, "2", sep = ".") # put a .2 at the end of the second allele
 
 
-## Adaptive
-adap_mhap <- read.csv(here("Genomics/Data/Adaptive_genotypes_mhapcode_wide.csv"))
 
 ```
 
-Merge the SNP, adaptive, and neutral mhap data frames.
+### Important filtering from adaptive panel
+
+After running the adap_panel_variationanalysis R script, I determined there was a lot of homogeneity in the adaptive panel that was skewing the relationships of individuals and making them look a lot more related than they are. These are the loci I am removing following that analysis:
+
+-   Remove all Ch28 (homogenous)
+
+-   From Omy05: keep only Omy_ch05_10_57 and omy_ch05_8
+
+-   greb1: keep mhap 10 and mhap2
+
+-   vgll3: remove snp2
+
+-   six6: this one was challenging because it looks like there's a lot of heterogeneity in this region. I selected Omy_Ch25_Six6_61287415 and Omy_Ch25_Six6_61318852
 
 ```{r}
-merged1 <- merge(adap_mhap,neutral_mhap, by = "indiv.ID") 
+## Adaptive
+adap_mhap <- read.csv(here("Genomics/Data/Adaptive_genotypes_mhapcode_wide.csv"))
+colnames(adap_mhap)
+
+# Filter out all but one of the Omy05 markers to avoid pseudo-replication
+adap_mhap_clean <- adap_mhap %>% 
+  # Ch 28
+  dplyr::select(!contains("Omy_Ch28_11")) %>% # remove all Ch_28 that aren't greb1
+  # vgll3
+  dplyr::select(-c("Omy_Ch22_VGLL3.6_snp2_haplotype.1", # remove vgll3 snp2
+                   "Omy_Ch22_VGLL3.6_snp2_haplotype.2")) %>% 
+  dplyr::select("indiv.ID", # keep individual id
+  # Omy05
+                "Omy_Ch05_10_57417407_haplotype.1", #Omy05
+                "Omy_Ch05_10_57417407_haplotype.2", #Omy05
+                "Omy_Ch05_8_28133607_haplotype.1",#Omy05
+                "Omy_Ch05_8_28133607_haplotype.2",#Omy05
+  # greb1
+                "Omy_Ch28_greb1_mhap10_haplotype.1",# greb1
+                "Omy_Ch28_greb1_mhap10_haplotype.2",# greb1
+                "Omy_Ch28_greb1_mhap2_haplotype.1", # greb1
+                "Omy_Ch28_greb1_mhap2_haplotype.2",   # greb1
+  # six6
+                
+                "Omy_Ch25_Six6_61287415_haplotype.1",
+                "Omy_Ch25_Six6_61287415_haplotype.2",
+                "Omy_Ch25_Six6_61318852_haplotype.1",
+                "Omy_Ch25_Six6_61318852_haplotype.2",
+  # leftover vgll3
+                "Omy_Ch22_VGLL3.1_haplotype.1",
+                "Omy_Ch22_VGLL3.1_haplotype.2",
+                "Omy_Ch22_VGLL3.6_snp1_haplotype.1",
+                "Omy_Ch22_VGLL3.6_snp1_haplotype.2") 
+```
+
+**This takes the adaptive panel down to 12 loci!**
+
+Merge the SNP, cleaned adaptive, and neutral mhap data frames.
+
+```{r}
+merged1 <- merge(adap_mhap_clean,neutral_mhap, by = "indiv.ID") 
 fullmerge <- merge(snp, merged1, by = "indiv.ID")
 ```
 
@@ -97,7 +147,12 @@ Filter out individuals pre-identified in Genomics.PreliminaryAnalysis, the SexId
 all <-  fullmerge %>% 
   filter(!indiv.ID %in% c("M145767","M145542", # matching indivs from scott creek and big creek
                        "M145524", "M145692")) %>% 
-  dplyr::select(-c(SexID.1,SexID.2))
+  dplyr::select(-c(SexID.1,SexID.2)) # remove six ID columns
+  
+all %>%
+  count(indiv.ID) %>%
+  filter(n > 1)
+colnames(all)
 ```
 
 Merge location data from the metadata file with the above data file.
@@ -109,6 +164,10 @@ populations <- ctmax %>%
                        "M145524", "M145692")) %>% 
   dplyr::select(c(indiv.ID,WATERSHED)) %>% 
   left_join(., all, by ="indiv.ID")
+
+populations %>%
+  count(indiv.ID) %>%
+  filter(n > 1)
 ```
 
 ## 2. Separate Data Frames for Each Population
@@ -337,6 +396,23 @@ alle_freqs <- long_genos %>%
 
 # see what that looks like:
 alle_freqs
+
+# How much missingness do you have?
+long_genos %>%
+  group_by(Locus) %>%
+  summarise(
+    n = n(),
+    missing = sum(is.na(Allele)),
+    prop_missing = mean(is.na(Allele))
+  )
+
+alle_freqs %>%
+  group_by(Locus) %>%
+  summarise(
+    n_alleles = n(),
+    freq_sum = sum(Freq)
+  )
+
 ```
 
 Reindex the data allele frequency data frame so that ckmr can use it
@@ -356,7 +432,6 @@ scottcreek_ckmr <- create_ckmr(
   ge_mod_assumed_pars_list = list(epsilon = 0.005),
   ge_mod_true_pars_list = list(epsilon = 0.005)
 )
-scottcreek_ckmr
 ```
 
 **Simulate genotype pairs and calculate their log probabilities.**
@@ -384,6 +459,83 @@ scottcreek_FS_U_logls
 ggplot(scottcreek_FS_U_logls,
             aes(x = logl_ratio, fill = true_relat)) +
   geom_density(alpha = 0.25)
+```
+
+### Estimating FPR
+
+```{r}
+scottcreek_FS_is <- mc_sample_simple(scottcreek_Qs, 
+                 nu = "FS",
+                 de = "U")
+
+scottcreek_FS_is
+
+FPR_results <- mc_sample_simple(
+  scottcreek_Qs,
+  nu = "FS",
+  de = "U",
+  tr = "U",
+    lambda_stars = seq(0, 20, 1)
+)
+sum(is.na(scottcreek))
+```
+
+#### How many comparisons? Setting acceptable FPR
+
+127 individuals
+
+```{r}
+0.1*((119*118)/2)^-1
+```
+
+#### Setting logLR
+
+Logl ratio that gives largest FPR smaller than 1.249 e-5:
+
+```{r}
+scottcreek_FS_is %>%
+  filter(FPR > 1.424299e-05) %>%
+  arrange(FPR) %>%
+  slice(1)
+```
+
+**Check for matchers.**
+
+```{r}
+matchers <- find_close_matching_genotypes(LG = long_genos,
+                                          CK = scottcreek_ckmr,
+                                          max_mismatch = 6)
+
+matchers
+```
+
+Compute LogLR for all pairwise comparisons.
+
+```{r}
+# Full sib pairs
+bigcreek_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
+                                              D2 = long_genos,
+                                              CK = bigcreek_ckmr,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+
+
+# note, num_cores is set to 1 because more than that breaks
+# it on CRAN checks.  But, leave it blank (i.e., don't use the
+# num_core option) to, by default, use all
+# your cores in parallel on a non-windows machine.
+```
+
+```{r}
+bigcreek_fs_pairwise_logls %>%
+  filter(logl_ratio > 18) %>%
+  arrange(desc(logl_ratio))
+
+bigcreek_FS_is %>%
+  arrange(Lambda_star) %>%
+  dplyr::select(Lambda_star, FPR) 
 ```
 
 ## 3c) Carmel River
@@ -473,6 +625,83 @@ ggplot(carmelriver_FS_U_logls,
   geom_density(alpha = 0.25)
 ```
 
+### Estimating FPR
+
+```{r}
+carmelriver_FS_is <- mc_sample_simple(carmelriver_Qs, 
+                 nu = "FS",
+                 de = "U")
+
+carmelriver_FS_is
+
+FPR_results <- mc_sample_simple(
+  carmelriver_Qs,
+  nu = "FS",
+  de = "U",
+  lambda_stars = seq(5, 20, by = 0.1)
+)
+```
+
+#### How many comparisons? Setting acceptable FPR
+
+116 individuals
+
+```{r}
+0.1*((116*115)/2)^-1
+```
+
+#### Setting logLR
+
+Logl ratio that gives largest FPR smaller than 1.249 e-5:
+
+```{r}
+carmelriver_FS_is %>%
+  filter(FPR > 1.49925e-05) %>%
+  arrange(FPR) %>%
+  slice(1)
+```
+
+Seems like we can set logLR to 18, but this is unclear.
+
+**Check for matchers.**
+
+```{r}
+matchers <- find_close_matching_genotypes(LG = long_genos,
+                                          CK = bigcreek_ckmr,
+                                          max_mismatch = 6)
+
+matchers
+```
+
+Compute LogLR for all pairwise comparisons.
+
+```{r}
+# Full sib pairs
+carmelriver_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
+                                              D2 = long_genos,
+                                              CK = carmelriver_ckmr,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+
+
+# note, num_cores is set to 1 because more than that breaks
+# it on CRAN checks.  But, leave it blank (i.e., don't use the
+# num_core option) to, by default, use all
+# your cores in parallel on a non-windows machine.
+```
+
+```{r}
+carmelriver_fs_pairwise_logls %>%
+  filter(logl_ratio > 18) %>%
+  arrange(desc(logl_ratio))
+
+carmelriver_FS_is %>%
+  arrange(Lambda_star) %>%
+  dplyr::select(Lambda_star, FPR) 
+```
+
 ## 3d) Napa River
 
 ```{r}
@@ -560,6 +789,83 @@ ggplot(napariver_FS_U_logls,
   geom_density(alpha = 0.25)
 ```
 
+### Estimating FPR
+
+```{r}
+napariver_FS_is <- mc_sample_simple(napariver_Qs, 
+                 nu = "FS",
+                 de = "U")
+
+napariver_FS_is
+
+FPR_results <- mc_sample_simple(
+  napariver_Qs,
+  nu = "FS",
+  de = "U",
+  lambda_stars = seq(5, 20, by = 0.1)
+)
+```
+
+#### How many comparisons? Setting acceptable FPR
+
+127 individuals
+
+```{r}
+0.1*((50*49)/2)^-1
+```
+
+#### Setting logLR
+
+Logl ratio that gives largest FPR smaller than 1.249 e-5:
+
+```{r}
+napariver_FS_is %>%
+  filter(FPR > 8.163265e-05) %>%
+  arrange(FPR) %>%
+  slice(1)
+```
+
+Seems like we can set logLR to 18, but this is unclear.
+
+**Check for matchers.**
+
+```{r}
+matchers <- find_close_matching_genotypes(LG = long_genos,
+                                          CK = napariver_ckmr,
+                                          max_mismatch = 6)
+
+matchers
+```
+
+Compute LogLR for all pairwise comparisons.
+
+```{r}
+# Full sib pairs
+napariver_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
+                                              D2 = long_genos,
+                                              CK = napariver_ckmr,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+
+
+# note, num_cores is set to 1 because more than that breaks
+# it on CRAN checks.  But, leave it blank (i.e., don't use the
+# num_core option) to, by default, use all
+# your cores in parallel on a non-windows machine.
+```
+
+```{r}
+napariver_fs_pairwise_logls %>%
+  filter(logl_ratio > 18) %>%
+  arrange(desc(logl_ratio))
+
+napariver_FS_is %>%
+  arrange(Lambda_star) %>%
+  dplyr::select(Lambda_star, FPR) 
+```
+
 ## 3e) Russian River
 
 ```{r}
@@ -645,4 +951,81 @@ russianriver_FS_U_logls
 ggplot(russianriver_FS_U_logls,
             aes(x = logl_ratio, fill = true_relat)) +
   geom_density(alpha = 0.25)
+```
+
+### Estimating FPR
+
+```{r}
+russianriver_FS_is <- mc_sample_simple(russianriver_Qs, 
+                 nu = "FS",
+                 de = "U")
+
+russianriver_FS_is
+
+FPR_results <- mc_sample_simple(
+  russianriver_Qs,
+  nu = "FS",
+  de = "U",
+  lambda_stars = seq(5, 20, by = 0.1)
+)
+```
+
+#### How many comparisons? Setting acceptable FPR
+
+127 individuals
+
+```{r}
+0.1*((72*71)/2)^-1
+```
+
+#### Setting logLR
+
+Logl ratio that gives largest FPR smaller than 1.249 e-5:
+
+```{r}
+bigcreek_FS_is %>%
+  filter(FPR > 3.912363e-05) %>%
+  arrange(FPR) %>%
+  slice(1)
+```
+
+Seems like we can set logLR to 18, but this is unclear.
+
+**Check for matchers.**
+
+```{r}
+matchers <- find_close_matching_genotypes(LG = long_genos,
+                                          CK = russianriver_ckmr,
+                                          max_mismatch = 6)
+
+matchers
+```
+
+Compute LogLR for all pairwise comparisons.
+
+```{r}
+# Full sib pairs
+russianriver_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
+                                              D2 = long_genos,
+                                              CK = russianriver_ckmr,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+
+
+
+# note, num_cores is set to 1 because more than that breaks
+# it on CRAN checks.  But, leave it blank (i.e., don't use the
+# num_core option) to, by default, use all
+# your cores in parallel on a non-windows machine.
+```
+
+```{r}
+russianriver_fs_pairwise_logls %>%
+  filter(logl_ratio > 18) %>%
+  arrange(desc(logl_ratio))
+
+russianriver_FS_is %>%
+  arrange(Lambda_star) %>%
+  dplyr::select(Lambda_star, FPR) 
 ```
