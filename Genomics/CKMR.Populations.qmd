@@ -13,6 +13,8 @@ The last ckmr script analysed the whole data set at once. While this didn't init
 2.  Create new data frames for each watershed/population
 3.  Run CKMR code on each population.
 
+On 9/10, I re-ran all the code after filtering out loci noted by K Reid as either having low variability or probable correlation with other loci. I also used FNR = 0.01 as the threshold for setting logLR values for determining full-sibs instead of FPR.
+
 ## 1. Prep library and data
 
 ```{r}
@@ -87,8 +89,79 @@ After running the adap_panel_variationanalysis R script, I determined there was 
 
 -   six6: this one was challenging because it looks like there's a lot of heterogeneity in this region. I selected Omy_Ch25_Six6_61287415 and Omy_Ch25_Six6_61318852
 
+Kerry suggested removing the following, across all panels:
+
+-   SH127645_308: low variability
+
+-   Omy_Ch22_VGLL3.6_snp2: low variability
+
+-   Omy_Ch25_Six6_61317777: low variability
+
+-   Omy_Ch25_Six6_61322413: low variability
+
+-   Omy_Ch25_Six6.6_snp2: low variability
+
+-   Omy_Ch28_11622532 : low variability
+
+-   Omy_Ch28_11623412 : low variability
+
+-   Omy_Ch28_11629294 : low variability
+
+-   Omy_Ch28_11641623 : low variability
+
+-   Omy_Ch28_11658853 : low variability
+
+-   tag_id_2020 : low variability
+
+-   tag_id_2192 : low variability
+
+-   tag_id_3593 : low variability
+
+-   tag_id_904 : low variability
+
+-   SH114448_87: Potentially correlated
+
+-   Omy_R04944 : Potentially correlated
+
+-   SH107074_217 : Potentially correlated
+
+-   Omy_Ch05_10_57417407 : Potentially correlated
+
+-   Omy_Ch05_6_56087112: Potentially correlated
+
+-   Omy_Ch05_7_76786553 : Potentially correlated
+
+-   Omy_Ch05_8_28133607 : Potentially correlated
+
+-   Omy_Ch05_9_54854574 : Potentially correlated
+
+-   Omy_Ch25_Six6_61316270 : Potentially correlated
+
+-   Omy_Ch25_Six6_61318852 : Potentially correlated
+
+-   Omy_Ch25_Six6.6_snp1 : Potentially correlated
+
+-   Omy_Ch28_11667578 : Potentially correlated
+
+-   Omy_Ch28_11676622 : Potentially correlated
+
+-   Omy_Ch28_11678603 : Potentially correlated
+
+-   Omy_Ch28_11683310 : Potentially correlated
+
+-   Omy_Ch28_11684744 : Potentially correlated
+
+-   Omy_Ch28_greb1_mhap6 : Potentially correlated
+
+-   Omy_Ch28_greb1_mhap8 : Potentially correlated
+
+-   tag_id_3862 : Potentially correlated
+
+-   tag_id_5746: Potentially correlated
+
 ```{r}
 ## Adaptive
+# These are the ones I selected to remove
 adap_mhap <- read.csv(here("Genomics/Data/Adaptive_genotypes_mhapcode_wide.csv"))
 colnames(adap_mhap)
 
@@ -125,6 +198,51 @@ adap_mhap_clean <- adap_mhap %>%
 
 **This takes the adaptive panel down to 12 loci!**
 
+The ones Kerry suggested to remove, across all panels:
+
+```{r}
+merged <- merge(adap_mhap,neutral_mhap, by = "indiv.ID") 
+fullmerge <- merge(snp, merged, by = "indiv.ID")
+merged_clean <- fullmerge %>% 
+  dplyr::select(!contains(c("SH127645_308",
+                            "SexID",
+                   "Omy_Ch22_VGLL3.6_snp2",
+                   "Omy_Ch25_Six6_61317777",
+                   "Omy_Ch25_Six6_61322413",
+                   "Omy_Ch25_Six6.6_snp2",
+                   "Omy_Ch28_11622532",
+                   "Omy_Ch28_11623412",
+                   "Omy_Ch28_11629294",
+                   "Omy_Ch28_11641623",
+                   "Omy_Ch28_11658853",
+                   "tag_id_2020",
+                   "tag_id_2192",
+                   "tag_id_3593",
+                   "tag_id_904",
+                   "SH114448_87",
+                   "Omy_R04944",
+                   "SH107074_217",
+                   "Omy_Ch05_10_57417407",
+                   "Omy_Ch05_6_56087112",
+                   "Omy_Ch05_7_76786553",
+                   "Omy_Ch05_8_28133607",
+                   "Omy_Ch05_9_54854574",
+                   "Omy_Ch25_Six6_61316270",
+                   "Omy_Ch25_Six6_61318852",
+                   "Omy_Ch25_Six6.6_snp1",
+                   "Omy_Ch28_11667578",
+                   "Omy_Ch28_11676622",
+                   "Omy_Ch28_11678603",
+                   "Omy_Ch28_11683310",
+                   "Omy_Ch28_11684744",
+                   "Omy_Ch28_greb1_mhap6",
+                   "Omy_Ch28_greb1_mhap8",
+                   "tag_id_3862",
+                   "tag_id_5746"))) %>% 
+  filter(!indiv.ID %in% c("M145767","M145542", # matching indivs from scott creek and big creek
+                       "M145524", "M145692"))
+```
+
 Merge the SNP, cleaned adaptive, and neutral mhap data frames.
 
 ```{r}
@@ -135,24 +253,10 @@ fullmerge <- merge(snp, merged1, by = "indiv.ID")
 Save the above data frame for easy access in the repository:
 
 ```{r}
-write.csv(fullmerge, "Data/merged_TRIMMEDgenetics_codewide.csv", row.names = FALSE)
+write.csv(merged_clean, "Data/merged_TRIMMEDgenetics_KReid_9.10.26_codewide.csv", row.names = FALSE)
 ```
 
-Filter out individuals pre-identified in Genomics.PreliminaryAnalysis, the SexId columns. Eventually, we will only want to keep two (ish) of the Omy columns in the adap_mhap data frame.
-
-```{r}
-all <-  fullmerge %>% 
-  filter(!indiv.ID %in% c("M145767","M145542", # matching indivs from scott creek and big creek
-                       "M145524", "M145692")) %>% 
-  dplyr::select(-c(SexID.1,SexID.2)) # remove six ID columns
-  
-all %>%
-  count(indiv.ID) %>%
-  filter(n > 1)
-colnames(all)
-```
-
-Merge location data from the metadata file with the above data file.
+Merge location data from the metadata file with the above data file. (Most recently re-ran after filtering out loci suggested by K Reid on 9/10)
 
 ```{r}
 populations <- ctmax %>% 
@@ -160,7 +264,7 @@ populations <- ctmax %>%
    filter(!indiv.ID %in% c("M145767","M145542", 
                        "M145524", "M145692")) %>% 
   dplyr::select(c(indiv.ID,WATERSHED)) %>% 
-  left_join(., all, by ="indiv.ID")
+  left_join(., merged_clean, by ="indiv.ID")
 
 populations %>%
   count(indiv.ID) %>%
@@ -242,7 +346,7 @@ afreqs_ready <- reindex_markers(alle_freqs)
 ```{r}
 bigcreek_ckmr <- create_ckmr(
   D = afreqs_ready,
-  kappa_matrix = kappas[c("FS", "U"), ],
+  kappa_matrix = kappas[c("PO","FS","U","HS"), ],
   ge_mod_assumed = ge_model_TGIE,
   ge_mod_true = ge_model_TGIE,
   ge_mod_assumed_pars_list = list(epsilon = 0.005),
@@ -255,8 +359,8 @@ bigcreek_ckmr
 
 ```{r}
 bigcreek_Qs <- simulate_Qij(bigcreek_ckmr, 
-                       calc_relats = c("FS", "U"),
-                       sim_relats = c("FS",  "U") )
+                       calc_relats = c("FS", "U","PO"),
+                       sim_relats = c("FS",  "U","HS","PO") )
 bigcreek_Qs
 ```
 
@@ -305,16 +409,16 @@ FPR_results <- mc_sample_simple(
 
 ## Setting logLR
 
-Logl ratio that gives largest FPR smaller than 1.249 e-5:
+Logl ratio that gives FNR = 0.01
 
 ```{r}
 bigcreek_FS_is %>%
-  filter(FPR > 1.249844e-05) %>%
-  arrange(FPR) %>%
+  filter(FNR == 0.01) %>%
+  arrange(FNR) %>%
   slice(1)
 ```
 
-Seems like we can set logLR to 18, but this is unclear.
+We can set logLR to 18.
 
 **Check for matchers.**
 
@@ -348,7 +452,7 @@ bigcreek_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
 ```
 
 ```{r}
-bigcreek_fs_pairwise_logls %>%
+fullsibs_bigcreek = bigcreek_fs_pairwise_logls %>%
   filter(logl_ratio > 18) %>%
   arrange(desc(logl_ratio))
 
@@ -423,7 +527,7 @@ afreqs_ready <- reindex_markers(alle_freqs)
 ```{r}
 scottcreek_ckmr <- create_ckmr(
   D = afreqs_ready,
-  kappa_matrix = kappas[c("FS", "U"), ],
+  kappa_matrix = kappas[c("FS", "U","PO","HS"), ],
   ge_mod_assumed = ge_model_TGIE,
   ge_mod_true = ge_model_TGIE,
   ge_mod_assumed_pars_list = list(epsilon = 0.005),
@@ -435,8 +539,8 @@ scottcreek_ckmr <- create_ckmr(
 
 ```{r}
 scottcreek_Qs <- simulate_Qij(scottcreek_ckmr, 
-                       calc_relats = c("FS", "U"),
-                       sim_relats = c("FS",  "U") )
+                       calc_relats = c("FS", "U","PO"),
+                       sim_relats = c("FS",  "U","HS","PO") )
 scottcreek_Qs
 ```
 
@@ -487,14 +591,16 @@ sum(is.na(scottcreek))
 
 #### Setting logLR
 
-Logl ratio that gives largest FPR smaller than 1.249 e-5:
+Logl ratio that gives FNR = 0.01
 
 ```{r}
 scottcreek_FS_is %>%
-  filter(FPR > 1.424299e-05) %>%
-  arrange(FPR) %>%
+  filter(FNR == 0.01) %>%
+  arrange(FNR) %>%
   slice(1)
 ```
+
+Set lambda to 17.
 
 **Check for matchers.**
 
@@ -526,8 +632,8 @@ scottcreek_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
 ```
 
 ```{r}
-scottcreek_fs_pairwise_logls %>%
-  filter(logl_ratio > 18) %>%
+fullsibs_scottcreek<- scottcreek_fs_pairwise_logls %>%
+  filter(logl_ratio > 16) %>%
   arrange(desc(logl_ratio))
 
 scottcreek_FS_is %>%
@@ -586,7 +692,7 @@ afreqs_ready <- reindex_markers(alle_freqs)
 ```{r}
 carmelriver_ckmr <- create_ckmr(
   D = afreqs_ready,
-  kappa_matrix = kappas[c("FS", "U"), ],
+  kappa_matrix = kappas[c("FS", "U","PO","HS"), ],
   ge_mod_assumed = ge_model_TGIE,
   ge_mod_true = ge_model_TGIE,
   ge_mod_assumed_pars_list = list(epsilon = 0.005),
@@ -599,8 +705,8 @@ carmelriver_ckmr
 
 ```{r}
 carmelriver_Qs <- simulate_Qij(carmelriver_ckmr, 
-                       calc_relats = c("FS", "U"),
-                       sim_relats = c("FS",  "U") )
+                       calc_relats = c("FS", "U","PO"),
+                       sim_relats = c("FS",  "U","HS","PO") )
 carmelriver_Qs
 ```
 
@@ -649,22 +755,22 @@ FPR_results <- mc_sample_simple(
 
 #### Setting logLR
 
-Logl ratio that gives largest FPR smaller than 1.249 e-5:
+Logl ratio that gives FNR = 0.01
 
 ```{r}
 carmelriver_FS_is %>%
-  filter(FPR > 1.49925e-05) %>%
-  arrange(FPR) %>%
+  filter(FNR == 0.01) %>%
+  arrange(FNR) %>%
   slice(1)
 ```
 
-Seems like we can set logLR to 18, but this is unclear.
+Set logLR to 15
 
 **Check for matchers.**
 
 ```{r}
 matchers <- find_close_matching_genotypes(LG = long_genos,
-                                          CK = bigcreek_ckmr,
+                                          CK = carmelriver_ckmr,
                                           max_mismatch = 6)
 
 matchers
@@ -690,8 +796,8 @@ carmelriver_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
 ```
 
 ```{r}
-carmelriver_fs_pairwise_logls %>%
-  filter(logl_ratio > 18) %>%
+fullsibs_carmelriver = carmelriver_fs_pairwise_logls %>%
+  filter(logl_ratio > 15) %>%
   arrange(desc(logl_ratio))
 
 carmelriver_FS_is %>%
@@ -750,7 +856,7 @@ afreqs_ready <- reindex_markers(alle_freqs)
 ```{r}
 napariver_ckmr <- create_ckmr(
   D = afreqs_ready,
-  kappa_matrix = kappas[c("FS", "U"), ],
+  kappa_matrix = kappas[c("FS", "U","PO","HS"), ],
   ge_mod_assumed = ge_model_TGIE,
   ge_mod_true = ge_model_TGIE,
   ge_mod_assumed_pars_list = list(epsilon = 0.005),
@@ -763,8 +869,8 @@ napariver_ckmr
 
 ```{r}
 napariver_Qs <- simulate_Qij(napariver_ckmr, 
-                       calc_relats = c("FS", "U"),
-                       sim_relats = c("FS",  "U") )
+                       calc_relats = c("FS", "U","PO"),
+                       sim_relats = c("FS",  "U","PO","HS") )
 napariver_Qs
 ```
 
@@ -813,16 +919,16 @@ FPR_results <- mc_sample_simple(
 
 #### Setting logLR
 
-Logl ratio that gives largest FPR smaller than 1.249 e-5:
+Logl ratio that gives FNR = 0.01
 
 ```{r}
 napariver_FS_is %>%
-  filter(FPR > 8.163265e-05) %>%
-  arrange(FPR) %>%
+  filter(FNR == 0.01) %>%
+  arrange(FNR) %>%
   slice(1)
 ```
 
-Seems like we can set logLR to 18, but this is unclear.
+Set lambda to 12, or maybe 13.
 
 **Check for matchers.**
 
@@ -854,8 +960,8 @@ napariver_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
 ```
 
 ```{r}
-napariver_fs_pairwise_logls %>%
-  filter(logl_ratio > 18) %>%
+fullsibs_napariver = napariver_fs_pairwise_logls %>%
+  filter(logl_ratio > 13) %>%
   arrange(desc(logl_ratio))
 
 napariver_FS_is %>%
@@ -914,7 +1020,7 @@ afreqs_ready <- reindex_markers(alle_freqs)
 ```{r}
 russianriver_ckmr <- create_ckmr(
   D = afreqs_ready,
-  kappa_matrix = kappas[c("FS", "U"), ],
+  kappa_matrix = kappas[c("FS", "U","PO","HS"), ],
   ge_mod_assumed = ge_model_TGIE,
   ge_mod_true = ge_model_TGIE,
   ge_mod_assumed_pars_list = list(epsilon = 0.005),
@@ -927,8 +1033,8 @@ russianriver_ckmr
 
 ```{r}
 russianriver_Qs <- simulate_Qij(russianriver_ckmr, 
-                       calc_relats = c("FS", "U"),
-                       sim_relats = c("FS",  "U") )
+                       calc_relats = c("FS", "U","PO"),
+                       sim_relats = c("FS",  "U","PO","HS") )
 russianriver_Qs
 ```
 
@@ -977,16 +1083,16 @@ FPR_results <- mc_sample_simple(
 
 #### Setting logLR
 
-Logl ratio that gives largest FPR smaller than 1.249 e-5:
+Logl ratio that gives FNR = 0.01
 
 ```{r}
 bigcreek_FS_is %>%
-  filter(FPR > 3.912363e-05) %>%
-  arrange(FPR) %>%
+  filter(FNR == 0.01) %>%
+  arrange(FNR) %>%
   slice(1)
 ```
 
-Seems like we can set logLR to 18, but this is unclear.
+Set lambda to either 17 or 18
 
 **Check for matchers.**
 
@@ -1018,7 +1124,7 @@ russianriver_fs_pairwise_logls <- pairwise_kin_logl_ratios(D1 = long_genos,
 ```
 
 ```{r}
-russianriver_fs_pairwise_logls %>%
+fullsibs_russianriver = russianriver_fs_pairwise_logls %>%
   filter(logl_ratio > 18) %>%
   arrange(desc(logl_ratio))
 
@@ -1026,3 +1132,5 @@ russianriver_FS_is %>%
   arrange(Lambda_star) %>%
   dplyr::select(Lambda_star, FPR) 
 ```
+
+Whether or not I set the loglr to 17 or 18 doesn't change the number of full sibs.

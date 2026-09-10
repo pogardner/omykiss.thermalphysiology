@@ -27,9 +27,6 @@ long_genos_adap <- adap_mhap %>%
   mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
   rename(Indiv = indiv.ID)
 
-ggplot(long_genos_adap, aes(x = Locus, y = Allele))+
-  geom_histogram()
-
 alle_freqs_adap <- long_genos_adap %>%
   count(Locus, Allele) %>%
   group_by(Locus) %>%
