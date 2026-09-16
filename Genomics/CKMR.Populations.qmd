@@ -159,11 +159,15 @@ Kerry suggested removing the following, across all panels:
 
 -   tag_id_5746: Potentially correlated
 
+    ```{r}
+    ## Adaptive
+    # These are the ones I selected to remove
+    adap_mhap <- read.csv(here("Genomics/Data/Adaptive_genotypes_mhapcode_wide.csv"))
+
+    ```
+
 ```{r}
-## Adaptive
-# These are the ones I selected to remove
-adap_mhap <- read.csv(here("Genomics/Data/Adaptive_genotypes_mhapcode_wide.csv"))
-colnames(adap_mhap)
+
 
 # Filter out all but one of the Omy05 markers to avoid pseudo-replication
 adap_mhap_clean <- adap_mhap %>% 
@@ -195,8 +199,6 @@ adap_mhap_clean <- adap_mhap %>%
                 "Omy_Ch22_VGLL3.6_snp1_haplotype.1",
                 "Omy_Ch22_VGLL3.6_snp1_haplotype.2") 
 ```
-
-**This takes the adaptive panel down to 12 loci!**
 
 The ones Kerry suggested to remove, across all panels:
 
@@ -313,12 +315,13 @@ long_genos <- bigcreek %>%
   mutate(Allele = ifelse(Allele == "0", NA, Allele)) %>%
   rename(Indiv = indiv.ID)
 
+saveRDS(long_genos, file = "Data/bigcreek_longgenos.rds")
 ```
 
-Compute allele frequencies.
+Compute allele frequencies. Save it as an rds file for input into greedy algorithm (other script).
 
 ```{r}
-alle_freqs <- long_genos %>%
+bigcreekalle_freqs <- long_genos %>%
   count(Locus, Allele) %>%
   group_by(Locus) %>%
   mutate(Freq = n / sum(n),
@@ -332,7 +335,7 @@ alle_freqs <- long_genos %>%
   filter(!is.na(Allele))
 
 # see what that looks like:
-alle_freqs
+saveRDS(bigcreekalle_freqs, file = "Data/bigcreek_allelefreqs.rds")
 ```
 
 Reindex the data allele frequency data frame so that ckmr can use it
@@ -482,7 +485,7 @@ long_genos <- scottcreek %>%
 Compute allele frequencies.
 
 ```{r}
-alle_freqs <- long_genos %>%
+scottcreekalle_freqs <- long_genos %>%
   count(Locus, Allele) %>%
   group_by(Locus) %>%
   mutate(Freq = n / sum(n),
@@ -497,6 +500,8 @@ alle_freqs <- long_genos %>%
 
 # see what that looks like:
 alle_freqs
+
+saveRDS(scottcreekalle_freqs)
 
 # How much missingness do you have?
 long_genos %>%

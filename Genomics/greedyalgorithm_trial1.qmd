@@ -1,0 +1,261 @@
+---
+title: "Compressing multi allelic microhaplotypes"
+format: html
+editor: visual
+---
+
+## Compressing multi-allelic microhaplotypes to bi-allelic format
+
+Building a genomic relatedness matrix (GRM) requires bi-allelic data. This is not compatible with our microhaplotype data, which sometimes has as many as 8 forms of one allele. Instead, we can compress this using a greedy algorithm. The greedy algorithm is a problem-solving algorithm that picks the most optimal choice at each step in the process. It does not consider previous choices- each choice is unique.
+
+E. Anderson wrote the following code for A. Beulke for her PhD research. He gave her permission to share that file with me. I have adapted it a bit with additional comments to help my understanding and any replication of this process.
+
+A concept he references frequently is minor allele frequencies (MAF's). We are shooting for MAF's of 0.5- this would show that the algorithm selected the most likely alleles at each step, thus working properly.
+
+```{r}
+library(tidyverse)
+```
+
+This is E. Anderson's code. First, he writes a function that acts any non-biallelic (SNP, or simple mhaps) into the algorithm.
+
+```{r}
+partition_greedy <- function(x) {
+  
+  if(length(x) == 2) {  # if it is already biallelic, just leave it
+    return(
+      tibble( # create a new data frame ewith tibble with the following col names
+        AlleleOrig = names(x), # these are new column names we're creating for alleles that are already biallelic
+        LumpedAllele = names(x),
+        FreqOrig = unname(x) # strips out row and column labels
+      )
+    )
+  } 
+  # Sort descending to place large items first
+  x_sorted <- sort(x, decreasing = TRUE)
+  
+  group1 <- c()
+  group2 <- c()
+  sum1 <- 0
+  sum2 <- 0
+  
+  for (i in 1:length(x_sorted)) {
+    val = x_sorted[i]
+    if (sum1 <= sum2) {
+      group1 <- c(group1, val)
+      sum1 <- sum1 + unname(val)
+    } else {
+      group2 <- c(group2, val)
+      sum2 <- sum2 + unname(val)
+    }
+  }
+  
+  # we use V and W to refer to the different lumped groups
+  tibble(
+    AlleleOrig = c(names(group1), names(group2)),
+    LumpedAllele = c(rep("V", length(group1)), rep("W", length(group2))),
+    FreqOrig = unname(c(group1, group2))
+  )
+}
+
+```
+
+Now I'll read in my first .rds file. This file is just for Big Creek.
+
+```{r}
+bigcreek_freq = read_rds("Data/bigcreek_allelefreqs.rds")
+str(bigcreek_freq$Allele)
+
+lumpy <- bigcreek_freq %>%
+  group_by(Chrom, Pos, Locus) %>%
+  nest() %>%
+  mutate(
+    lumps = map(.x = data, .f = function(x) {
+      v <- x$Freq
+      names(v) <- x$Allele
+      partition_greedy(v)
+    })
+  ) %>%
+  unnest(cols = c(data, lumps)) %>%
+  ungroup()
+
+lumpy
+```
+
+I don't have AlleIdx or LocIdx, which Anne had. And I wonder if that's because my input data frame doesn't have the original genotypes in them. This wasn't a problem for the CKMRsim output, so I'll push forward, knowing this could be an issue later.
+
+Now we look at how many alleles we end up with:
+
+```{r}
+new_freqs <- lumpy %>%
+  group_by(Chrom, Pos, Locus, LumpedAllele) %>%
+  summarise(
+    LumpedFreq = sum(FreqOrig),
+    orig_num_alle = n()
+  )
+
+new_freqs
+```
+
+At this point, my lumpedallele column is still using numbers, whereas his example has V and W. It still seemed to work, but this may be worth changing.
+
+```{r}
+MAFs <- new_freqs %>%
+  filter(LumpedFreq == min(LumpedFreq)) %>%
+  rename(MAF = LumpedFreq) %>%
+  mutate(
+    type = case_when(
+      str_detect(Locus, "(hap1_code|haplotype)$") ~ "mhap",
+      TRUE ~ "SNP"
+    )
+  )
+
+ggplot(MAFs, aes(x = MAF, fill = type)) +
+  geom_histogram(binwidth = 0.01) +
+  facet_wrap(~ type, ncol = 1)
+```
+
+This didn't turn out nearly as pretty as E. Anderson's did on Anne's data. I'm not sure if something went wrong. I will proceed as if it's ok, but go over this in depth with Kerry once she returns from leave.
+
+```{r}
+joiner = lumpy %>% 
+  dplyr::select(Chrom, Pos, Locus, AlleleOrig, LumpedAllele)
+```
+
+This data frame can then be joined with the long_genos data frame created in the the CKMR.Populations file. E. Anderson recommends using by = join_by(Chrom, Pos, Locus, Allele == AlleleOrig)
+
+## Read in long genos from Big Creek
+
+```{r}
+lg <- read_rds("Data/bigcreek_longgenos.rds")
+```
+
+Join by locus? I don't fully understand how we're not losing data here.
+
+```{r}
+bigcreek_lumpy = left_join(
+  lg, joiner, 
+  by =  join_by(Locus, Allele == AlleleOrig)) %>% 
+  dplyr::select(-Allele) %>%  # need to delete old allele column
+  rename(Allele = LumpedAllele) # replace with new allele column
+```
+
+Now I'm going to go back through ckmrsim and see what happens.
+
+Calculate allele frequencies:
+
+```{r}
+bigcreekalle_freqs <- bigcreek_lumpy %>%
+  dplyr::select(-Allele) %>%  # need to delete old allele column
+  rename(Allele = LumpedAllele) %>% # replace with new allele column
+  count(Locus, Allele) %>%
+  group_by(Locus) %>%
+  mutate(Freq = n / sum(n),
+         Chrom = "Unk",
+         Pos = as.integer(factor(Locus, levels = loci))) %>%
+  ungroup() %>%
+  dplyr::select(Chrom, Pos, Locus, Allele, Freq) %>%
+  arrange(Pos, desc(Freq)) %>%
+  mutate(AlleIdx = NA,
+         LocIdx = NA) %>%
+  filter(!is.na(Allele))
+```
+
+```{r}
+afreqs_ready <- reindex_markers(bigcreekalle_freqs)
+```
+
+Create a ckmr object
+
+```{r}
+bigcreek_ckmr_lumpy <- create_ckmr(
+  D = afreqs_ready,
+  kappa_matrix = kappas[c("PO","FS","U","HS"), ],
+  ge_mod_assumed = ge_model_TGIE,
+  ge_mod_true = ge_model_TGIE,
+  ge_mod_assumed_pars_list = list(epsilon = 0.005),
+  ge_mod_true_pars_list = list(epsilon = 0.005)
+)
+bigcreek_ckmr_lumpy
+```
+
+Nice, so the greedy algorithm worked! The only concern is it says that it has between 2 and 2 alleles, and I think it should say between 1 and 2 alleles...
+
+```{r}
+bigcreek_Qs <- simulate_Qij(bigcreek_ckmr_lumpy, 
+                       calc_relats = c("FS", "U","PO"),
+                       sim_relats = c("FS",  "U","HS","PO") )
+bigcreek_Qs
+```
+
+**Compute log-likelihood ratios to view them**
+
+```{r}
+bigcreek_FS_U_logls <- extract_logls(bigcreek_Qs,
+                            numer = c(FS = 1),
+                            denom = c(U = 1))
+
+bigcreek_FS_U_logls
+```
+
+**Visualize**
+
+```{r}
+ggplot(bigcreek_FS_U_logls,
+            aes(x = logl_ratio, fill = true_relat)) +
+  geom_density(alpha = 0.25)
+```
+
+Check to make sure there are truly no identical individuals (there shouldn't be):
+
+```{r}
+
+bigcreek_lumpy_long_genos = bigcreek_lumpy %>% 
+  dplyr::select(-c(Pos,Chrom))
+matchers <- find_close_matching_genotypes(LG = bigcreek_lumpy_long_genos,
+                                          CK = bigcreek_ckmr_lumpy,
+                                          max_mismatch = 6)
+matchers
+```
+
+Alright, so it worked!! Great! Let's see how many full sibs we have.
+
+First, set loglr:
+
+```{r}
+bigcreek_FS_is <- mc_sample_simple(bigcreek_Qs, 
+                 nu = "FS",
+                 de = "U")
+
+bigcreek_FS_is
+
+#find where FNR > 0.01
+bigcreek_FS_is %>%
+  filter(FNR == 0.01) %>%
+  arrange(FNR) %>%
+  slice(1)
+
+```
+
+So logLR is 10. This makes some sense- we've collapsed some of the mhaps that gave us differentiation, so we lose some power.
+
+```{r}
+bigcreek_lumpy_pairwise_logls <- pairwise_kin_logl_ratios(
+                                              D1 = bigcreek_lumpy_long_genos,
+                                              D2 = bigcreek_lumpy_long_genos,
+                                              CK = bigcreek_ckmr_lumpy,
+                                              numer = "FS",
+                                              denom = "U", 
+                                              num_cores = 1)
+```
+
+Pairs with logLR greater than 10:
+
+```{r}
+bigcreek_lumpy_pairwise_logls %>%
+  filter(logl_ratio > 10) %>%
+  arrange(desc(logl_ratio))
+```
+
+We find 262 pairs. What about trios?
+
+The next steps will be to build a sibling network and pull out groups. The goal should be to develop a workflow for each population that can be replicated for all other populations. During this network analysis, it will be important to consider year, as well.
